@@ -9,6 +9,14 @@ import { FooterComponent } from './components/footer/footer.component';
 import { ProjectsComponent } from './components/projects/projects.component';
 import { HireMeComponent } from './components/hire-me/hire-me.component';
 import { CVComponent } from './components/cv/cv.component';
+import { Routes, RouterModule } from '@angular/router';
+
+const routingulAplicatiei: Routes = [
+  { path: '', component: HomeComponent },
+  { path: 'projects', component: ProjectsComponent },
+  { path: 'hireme', component: HireMeComponent },
+  { path: 'cv', component: CVComponent },
+];
 
 @NgModule({
   declarations: [
@@ -22,7 +30,8 @@ import { CVComponent } from './components/cv/cv.component';
   ],
   imports: [
     BrowserModule,
-    NgbModule
+    NgbModule,
+    RouterModule.forRoot(routingulAplicatiei, {scrollPositionRestoration: 'enabled'}),
   ],
   providers: [],
   bootstrap: [AppComponent]

@@ -1,32 +1,39 @@
 <nav
-      class="navbar navbar-dark navbar-expand-lg fixed-top bg-white portfolio-navbar gradient"
+  class="navbar navbar-dark navbar-expand-lg fixed-top bg-white portfolio-navbar gradient"
+>
+  <div class="container">
+    <a class="navbar-brand logo" routerLink="/">Brand</a
+    ><button
+      data-toggle="collapse"
+      class="navbar-toggler"
+      data-target="#navbarNav"
+      aria-expanded="false"
     >
-      <div class="container">
-        <a class="navbar-brand logo" href="#">Brand</a
-        ><button
-          data-toggle="collapse"
-          class="navbar-toggler"
-          data-target="#navbarNav"
-          aria-expanded="false"
+      <span class="sr-only">Toggle navigation</span
+      ><span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="nav navbar-nav ml-auto">
+        <li
+          class="nav-item"
+          role="presentation"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: true }"
         >
-          <span class="sr-only">Toggle navigation</span
-          ><span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-          <ul class="nav navbar-nav ml-auto">
-            <li class="nav-item" role="presentation">
-              <a class="nav-link active" href="/index.html">Home</a>
-            </li>
-            <li class="nav-item" role="presentation">
-              <a class="nav-link" href="/projects-grid-cards.html">Projects</a>
-            </li>
-            <li class="nav-item" role="presentation">
-              <a class="nav-link" href="/cv.html">CV</a>
-            </li>
-            <li class="nav-item" role="presentation">
-              <a class="nav-link" href="/hire-me.html">Hire me</a>
-            </li>
-          </ul>
-        </div>
-      </div>
-    </nav>
+          <a class="nav-link active" routerLink="/">Home</a>
+        </li>
+        <li class="nav-item" role="presentation" routerLinkActive="active">
+          <a class="nav-link" routerLink="/projects">Projects</a>
+        </li>
+        <li class="nav-item" role="presentation" routerLinkActive="active">
+          <a class="nav-link" routerLink="/cv">CV</a>
+        </li>
+        <li class="nav-item" role="presentation" routerLinkActive="active">
+          <a class="nav-link" routerLink="/hireme">Hire me</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+
