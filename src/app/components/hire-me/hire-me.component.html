@@ -7,7 +7,7 @@
       <form>
         <div class="form-group">
           <label for="subject">Subject</label
-          ><select class="form-control" id="subject">
+          ><select class="form-control" id="subject" ngModel name="select">
             <option value="" selected="">Choose Subject</option>
             <option value="1">Subject 1</option>
             <option value="2">Subject 2</option>
@@ -16,24 +16,37 @@
         </div>
         <div class="form-group">
           <label for="email">Email</label
-          ><input class="form-control" type="email" id="email" />
+          ><input
+            class="form-control"
+            type="email"
+            id="email"
+            ngModel
+            name="email"
+          />
         </div>
         <div class="form-group">
           <label for="message">Message</label
-          ><textarea class="form-control" id="message"></textarea>
+          ><textarea
+            class="form-control"
+            id="message"
+            ngModel
+            name="mesaj"
+          ></textarea>
         </div>
         <div class="form-group">
           <div class="form-row">
             <div class="col-md-6">
               <label for="hire-date">Date</label
-              ><input class="form-control" id="hire-date" type="date" />
+              ><input
+                class="form-control"
+                id="hire-date"
+                type="date"
+                name="data"
+                ngModel
+              />
             </div>
             <div class="col-md-6 button">
-              <button
-                class="btn btn-primary btn-block"
-                type="submit"
-                (click)="onSubmit()"
-              >
+              <button class="btn btn-primary btn-block" type="submit">
                 Hire Me
               </button>
             </div>
