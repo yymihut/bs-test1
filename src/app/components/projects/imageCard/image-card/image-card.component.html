@@ -1,0 +1,27 @@
+<div class="card border-0">
+  <a (click)="openModal()"
+    ><img
+      class="card-img-top scale-on-hover"
+      [src]="image.imagePath"
+      alt="{{ image.name }}"
+  /></a>
+  <div class="card-body">
+    <h6>
+      <a href="#">{{ image.name }}</a>
+    </h6>
+    <p class="text-muted card-text">
+      {{ image.description }}
+    </p>
+  </div>
+</div>
+<confirmation-modal
+  #confirmationModal
+  (newConfirmationEvent)="getConfirmationValue($event)"
+  [modalStyle]="modalStyle"
+  [modalTitle]="image.name"
+  [modalBody]="image.id"
+  [text]="'ID-ul imaginii este:'"
+  [modalButtonColor]="modalButtonColor"
+>
+  <img class="card-img-top" [src]="image.imagePath" alt="{{ image.name }}" />
+</confirmation-modal>

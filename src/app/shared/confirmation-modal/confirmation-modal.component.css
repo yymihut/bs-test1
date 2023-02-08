@@ -1,0 +1,44 @@
+.modal-style-primary {
+  border-top: 4px solid #007bff;
+  color: #007bff;
+}
+
+.modal-style-success {
+  border-top: 4px solid #28a745;
+  color: #28a745;
+}
+
+.modal-style-danger {
+  border-top: 4px solid #dc3545;
+  color: #dc3545;
+}
+
+.modal-style-warning {
+  border-top: 4px solid #ffc107;
+  color: #ffc107;
+}
+img {
+  width: 100%;
+  height: auto;
+}
+.modal-body {
+  display: flex;
+  flex-direction: column;
+}
+.modal-content {
+  display: flex;
+    max-width: 80%;
+  width: 80%;
+}
+#confirmationModal {
+  display: flex;
+}
+.modal-dialog {
+  display: flex;
+}
+span {
+  color: black;
+  font-size: x-large;
+}
+
+

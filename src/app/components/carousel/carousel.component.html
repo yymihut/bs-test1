@@ -1,0 +1,28 @@
+<div #carouselComp style="width: 100%; height: auto">
+  <carousel
+    [noWrap]="noWrapSlides"
+    [showIndicators]="showIndicator"
+    [isAnimated]="true"
+    [itemsPerSlide]=2
+    [singleSlideOffset]=true
+  >
+    <slide *ngFor="let slide of slides; let index = index">
+      <img
+        [src]="slide.image"
+        alt="image slide"
+        style="display: block; width: 100%"
+      />
+      <div class="carousel-caption">
+        <h4>Slide {{ index }}</h4>
+        <p>{{ slide.text }}</p>
+      </div>
+    </slide>
+  </carousel>
+  <br />
+  <div>
+    <!-- <div class="checkbox">
+        <label><input type="checkbox" [(ngModel)]="noWrapSlides">Disable Slide Looping</label>
+        <label><input type="checkbox" [(ngModel)]="showIndicator">Enable Indicator</label>
+     </div> -->
+  </div>
+</div>

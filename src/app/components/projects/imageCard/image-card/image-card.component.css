@@ -1,0 +1,15 @@
+a{
+  cursor: pointer;
+}
+
+::ng-deep ngb-modal-backdrop {
+  z-index: 600 !important;
+}
+img {
+  width: 100%;
+  height: auto;
+}
+::ng-deep .my-class .modal-dialog {
+  max-width: 80%;
+  width: 80%;
+}

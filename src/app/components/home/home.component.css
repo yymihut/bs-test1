@@ -1,0 +1,15 @@
+#container {
+  display: flex;
+  justify-content: center;
+}
+.row {
+  justify-content: center;
+}
+
+
+.carousel-inner {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+}
+
