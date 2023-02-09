@@ -1,0 +1,11 @@
+textarea.ng-invalid.ng-touched,
+input.ng-invalid.ng-touched,
+select.ng-invalid.ng-touched {
+  border: 2px solid red;
+}
+#warning {
+  color: red;
+}
+::ng-deep ngb-modal-backdrop {
+  z-index: 600 !important;
+}

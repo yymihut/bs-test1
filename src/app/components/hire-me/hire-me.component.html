@@ -4,55 +4,237 @@
       <div class="heading">
         <h2>Contact</h2>
       </div>
-      <form>
+      <form [formGroup]="dateForm" (ngSubmit)="onSubmit()">
         <div class="form-group">
-          <label for="subject">Subject</label
-          ><select class="form-control" id="subject" ngModel name="select">
-            <option value="" selected="">Choose Subject</option>
-            <option value="1">Subject 1</option>
-            <option value="2">Subject 2</option>
-            <option value="3">Subject 3</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label for="email">Email</label
-          ><input
-            class="form-control"
-            type="email"
-            id="email"
-            ngModel
-            name="email"
-          />
-        </div>
-        <div class="form-group">
-          <label for="message">Message</label
-          ><textarea
-            class="form-control"
-            id="message"
-            ngModel
-            name="mesaj"
-          ></textarea>
-        </div>
-        <div class="form-group">
-          <div class="form-row">
-            <div class="col-md-6">
-              <label for="hire-date">Date</label
-              ><input
-                class="form-control"
-                id="hire-date"
-                type="date"
-                name="data"
-                ngModel
-              />
+          <div class="form-group">
+            <label for="subject">Subject</label
+            ><select
+              class="form-control"
+              id="subject"
+              formControlName="subiect"
+            >
+              <option value="">Choose Subject</option>
+              <option value="1">Subject 1</option>
+              <option value="2">Subject 2</option>
+              <option value="3">Subject 3</option>
+            </select>
+            <span
+              id="warning"
+              *ngIf="
+                !dateForm.get('subiect')?.valid &&
+                dateForm.get('subiect')?.touched
+              "
+              class="help-block"
+              >Va rog selectati un subiect !</span
+            >
+          </div>
+          <div class="form-group">
+            <label for="email">Email</label
+            ><input
+              class="form-control"
+              type="email"
+              id="email"
+              formControlName="email"
+            />
+            <span
+              id="warning"
+              *ngIf="
+                !dateForm.get('email')?.valid && dateForm.get('email')?.touched
+              "
+              class="help-block"
+              >Va rog introduceti un email corect !</span
+            >
+          </div>
+          <div class="form-group">
+            <div class="radio" *ngFor="let item of sex">
+              <label>
+                <input type="radio" formControlName="sex" [value]="item" />
+                {{ item }}
+              </label>
             </div>
-            <div class="col-md-6 button">
-              <button class="btn btn-primary btn-block" type="submit">
-                Hire Me
-              </button>
+            <span
+              id="warning"
+              *ngIf="
+                !dateForm.get('sex')?.valid && dateForm.get('sex')?.touched
+              "
+              class="help-block"
+              >Va rog alegeti sexul !</span
+            >
+          </div>
+          <div class="form-group">
+            <label for="message">Message</label
+            ><textarea
+              placeholder="Intoduce mesajul"
+              class="form-control"
+              id="message"
+              formControlName="mesaj"
+            ></textarea>
+            <span
+              id="warning"
+              *ngIf="
+                !dateForm.get('mesaj')?.valid && dateForm.get('mesaj')?.touched
+              "
+              class="help-block"
+              >Va rog introduceti un mesaj !</span
+            >
+          </div>
+          <div class="form-group" formArrayName="hobbyes">
+            <h3>Your hobbyes</h3>
+            <button
+              class="btn btn-default"
+              type="button"
+              (click)="onAddHobby()"
+            >
+              Adauga Hobby
+            </button>
+            <div
+              class="form-group"
+              *ngFor="let item of dateForm.get('hobbyes').controls"
+            >
+              <input type="text" />
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="form-row">
+              <div class="col-md-6">
+                <label for="hire-date">Date</label
+                ><input
+                  class="form-control"
+                  id="hire-date"
+                  type="date"
+                  formControlName="data"
+                />
+                <span
+                  id="warning"
+                  *ngIf="
+                    !dateForm.get('data')?.valid &&
+                    dateForm.get('data')?.touched
+                  "
+                  class="help-block"
+                  >Va rog alegeti o data !</span
+                >
+              </div>
+              <div class="col-md-6 button">
+                <button class="btn btn-primary btn-block" type="submit">
+                  Hire Me
+                </button>
+                <span
+                  id="warning"
+                  *ngIf="!dateForm.valid && dateForm.touched"
+                  class="help-block"
+                  >Aveti campuri necompletate/neselectate !</span
+                >
+              </div>
             </div>
           </div>
         </div>
       </form>
+      <!-- varianta de form cu template, si autodetection form cu angular - ngModel form -->
+      <!-- #dateleUserului="ngModelGroup" - obtinem acces la obiectul creeat dateleUserului, sa afisam mai jos daca tot grupul este valid -->
+      <!-- <form (ngSubmit)="onSubmit()" #f="ngForm">
+        <div
+          class="form-group"
+          ngModelGroup="dateleUserului"
+          #dateleUserului="ngModelGroup"
+        >
+          <div class="form-group">
+            <label for="subject">Subject</label
+            ><select
+              class="form-control"
+              id="subject"
+              ngModel
+              name="selectia"
+              required
+            >
+              <option value="" selected="1">Choose Subject</option>
+              <option value="1">Subject 1</option>
+              <option value="2">Subject 2</option>
+              <option value="3">Subject 3</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="email">Email</label
+            ><input
+              class="form-control"
+              type="email"
+              id="email"
+              ngModel
+              name="email"
+              required
+              placeholder="Emailul tau"
+            />
+          </div>
+          <div class="form-group">
+            <div class="radio" *ngFor="let item of sex">
+              <label>
+                <input
+                  type="radio"
+                  name="sexul"
+                  ngModel
+                  [value]="item"
+                  required
+                />{{ item }}
+              </label>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="message">Message</label
+            ><textarea
+              placeholder="Intoduce mesajul"
+              class="form-control"
+              id="message"
+              ngModel
+              name="mesaj"
+              required
+              #tex="ngModel"
+            ></textarea
+            ><span class="help-block" *ngIf="!tex.valid && tex.touched">
+              Va rog introduceti mesajul !</span
+            >
+          </div>
+          <div class="form-group">
+            <div class="form-row">
+              <div class="col-md-6">
+                <label for="hire-date">Date</label
+                ><input
+                  class="form-control"
+                  id="hire-date"
+                  type="date"
+                  name="data"
+                  ngModel
+                  required
+                />
+              </div>
+              <div class="col-md-6 button">
+                <button
+                  class="btn btn-primary btn-block"
+                  type="submit"
+                  [disabled]="!f.valid"
+                >
+                  Hire Me
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <p id="warning" *ngIf="!dateleUserului.valid && dateleUserului.touched">
+          Datele introduse nu sunt complete !!
+        </p>
+      </form>
+      <confirmation-modal
+        #confirmationModal
+        [modalStyle]="modalStyle"
+        [modalTitle]="'Datele trimise'"
+        [modalButtonColor]="modalButtonColor"
+      >
+        <div>
+          <p>Subiect: {{ user.subiect }}</p>
+          <p>Email: {{ user.email }}</p>
+          <p>Sex: {{ user.sex }}</p>
+          <p>Mesaj: {{ user.mesaj }}</p>
+          <p>Data: {{ user.data }}</p>
+        </div>
+      </confirmation-modal> -->
     </div>
   </section>
 </main>

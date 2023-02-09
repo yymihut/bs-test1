@@ -20,7 +20,6 @@ import { CommonModule } from '@angular/common';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { CarouselComponent } from './components/carousel/carousel.component';
 
-
 const routingulAplicatiei: Routes = [
   { path: '', component: HomeComponent },
   { path: 'projects', component: ProjectsComponent },
@@ -54,7 +53,8 @@ const routingulAplicatiei: Routes = [
     RouterModule.forRoot(routingulAplicatiei, {
       scrollPositionRestoration: 'enabled',
     }), //la incarcarea paginii o incarca de sus
-    SharedModule, BrowserAnimationsModule, //am creeat un modul pt sheruirea mai multor componente
+    SharedModule,
+    BrowserAnimationsModule, //am creeat un modul pt sheruirea mai multor componente
   ],
   providers: [ImageService],
   bootstrap: [AppComponent],
