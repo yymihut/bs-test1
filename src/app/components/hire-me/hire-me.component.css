@@ -6,13 +6,6 @@ select.ng-invalid.ng-touched {
 #warning {
   color: red;
 }
-.warning {
-  color: red;
-}
-.adauga-hobby {
-  width: 150px;
-  margin-bottom: 10px;
-}
 ::ng-deep ngb-modal-backdrop {
   z-index: 600 !important;
 }

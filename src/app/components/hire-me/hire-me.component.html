@@ -7,33 +7,43 @@
       <form [formGroup]="dateForm" (ngSubmit)="onSubmit()">
         <div class="form-group">
           <div class="form-group">
-            <label for="subject">Subject</label><select class="form-control" id="subject" formControlName="subiect">
+            <label for="subject">Subject</label
+            ><select
+              class="form-control"
+              id="subject"
+              formControlName="subiect"
+            >
               <option value="">Choose Subject</option>
               <option value="1">Subject 1</option>
               <option value="2">Subject 2</option>
               <option value="3">Subject 3</option>
             </select>
-            <span id="warning" *ngIf="
+            <span
+              id="warning"
+              *ngIf="
                 !dateForm.get('subiect')?.valid &&
                 dateForm.get('subiect')?.touched
-              " class="help-block">Va rog selectati un subiect !</span>
+              "
+              class="help-block"
+              >Va rog selectati un subiect !</span
+            >
           </div>
           <div class="form-group">
-            <label for="email">Email</label><input class="form-control" type="email" id="email"
-              formControlName="email" />
-            <span id="warning" *ngIf="
+            <label for="email">Email</label
+            ><input
+              class="form-control"
+              type="email"
+              id="email"
+              formControlName="email"
+            />
+            <span
+              id="warning"
+              *ngIf="
                 !dateForm.get('email')?.valid && dateForm.get('email')?.touched
-              " class="help-block">Va rog introduceti un email corect !</span>
-          </div>
-          <div class="form-group">
-            <label for="name">Nume</label><input class="form-control" type="text" id="nume" formControlName="nume" />
-            <span id="warning" *ngIf="
-                !dateForm.get('nume')?.valid && dateForm.get('nume')?.touched
-              " class="help-block">
-              <span class="warning" *ngIf="dateForm.get('nume').errors['numele-este-interzis']">Numele acesta este
-                invalid</span>
-              <span class="warning" *ngIf="dateForm.get('nume').errors['required']">Va rog introduceti un nume !</span>
-            </span>
+              "
+              class="help-block"
+              >Va rog introduceti un email corect !</span
+            >
           </div>
           <div class="form-group">
             <div class="radio" *ngFor="let item of sex">
@@ -42,42 +52,78 @@
                 {{ item }}
               </label>
             </div>
-            <span id="warning" *ngIf="
+            <span
+              id="warning"
+              *ngIf="
                 !dateForm.get('sex')?.valid && dateForm.get('sex')?.touched
-              " class="help-block">Va rog alegeti sexul !</span>
+              "
+              class="help-block"
+              >Va rog alegeti sexul !</span
+            >
           </div>
           <div class="form-group">
-            <label for="message">Message</label><textarea placeholder="Intoduce mesajul" class="form-control"
-              id="message" formControlName="mesaj"></textarea>
-            <span id="warning" *ngIf="
+            <label for="message">Message</label
+            ><textarea
+              placeholder="Intoduce mesajul"
+              class="form-control"
+              id="message"
+              formControlName="mesaj"
+            ></textarea>
+            <span
+              id="warning"
+              *ngIf="
                 !dateForm.get('mesaj')?.valid && dateForm.get('mesaj')?.touched
-              " class="help-block">Va rog introduceti un mesaj !</span>
+              "
+              class="help-block"
+              >Va rog introduceti un mesaj !</span
+            >
           </div>
           <div class="form-group" formArrayName="hobbyes">
-            <h6>Your hobbyes</h6>
-            <button class="btn btn-primary btn-block adauga-hobby" type="button" (click)="onAddHobby()">
+            <h3>Your hobbyes</h3>
+            <button
+              class="btn btn-default"
+              type="button"
+              (click)="onAddHobby()"
+            >
               Adauga Hobby
             </button>
-            <div class="form-group" *ngFor="let item of arrayHobyes.controls; let i = index">
-              <input type="text" class="form-control " [formControlName]="i" placeholder="scrie hobiul tau !" />
+            <div
+              class="form-group"
+              *ngFor="let item of dateForm.get('hobbyes').controls"
+            >
+              <input type="text" />
             </div>
           </div>
           <div class="form-group">
             <div class="form-row">
               <div class="col-md-6">
-                <label for="hire-date">Date</label><input class="form-control" id="hire-date" type="date"
-                  formControlName="data" />
-                <span id="warning" *ngIf="
+                <label for="hire-date">Date</label
+                ><input
+                  class="form-control"
+                  id="hire-date"
+                  type="date"
+                  formControlName="data"
+                />
+                <span
+                  id="warning"
+                  *ngIf="
                     !dateForm.get('data')?.valid &&
                     dateForm.get('data')?.touched
-                  " class="help-block">Va rog alegeti o data !</span>
+                  "
+                  class="help-block"
+                  >Va rog alegeti o data !</span
+                >
               </div>
               <div class="col-md-6 button">
-                <button class="btn btn-primary btn-block" type="submit" [disabled]="!dateForm.valid">
+                <button class="btn btn-primary btn-block" type="submit">
                   Hire Me
                 </button>
-                <span id="warning" *ngIf="!dateForm.valid && dateForm.touched" class="help-block">Aveti campuri
-                  necompletate/neselectate !</span>
+                <span
+                  id="warning"
+                  *ngIf="!dateForm.valid && dateForm.touched"
+                  class="help-block"
+                  >Aveti campuri necompletate/neselectate !</span
+                >
               </div>
             </div>
           </div>
