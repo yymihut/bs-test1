@@ -62,7 +62,7 @@ export class HireMeComponent implements OnInit {
   get arrayHobyes() {
     return <FormArray>this.dateForm.get('hobbyes');
   }
-  onCloseModal() {
+  resetare() {
     this.dateForm.reset();
   }
 
