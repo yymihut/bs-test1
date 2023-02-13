@@ -25,7 +25,7 @@ export class ConfirmationModalComponent implements OnInit {
   @ViewChild('confirmationModal')
   private modalContent!: TemplateRef<ConfirmationModalComponent>;
   @Output() newConfirmationEvent = new EventEmitter<string>();
-  @Output('resetare') resetare:EventEmitter<any> = new EventEmitter();
+  @Output('resetare') resetare: EventEmitter<any> = new EventEmitter();
 
   @Input() modalStyle: any;
   @Input() modalTitle: any;
@@ -43,10 +43,6 @@ export class ConfirmationModalComponent implements OnInit {
   }
 
   ngOnInit(): void {}
-
-  resetareForm() {
-    this.resetare.emit();
-  }
 
   open(): Promise<boolean> {
     return new Promise<boolean>((resolve) => {
