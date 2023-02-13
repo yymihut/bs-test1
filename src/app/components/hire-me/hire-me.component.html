@@ -100,7 +100,7 @@
         </div>
       </form>
       <confirmation-modal #confirmationModal [modalStyle]="modalStyle" [modalTitle]="'Datele trimise'"
-        [modalButtonColor]="modalButtonColor" (resetare)="resetare">
+        [modalButtonColor]="modalButtonColor" (resetare)="resetare()">
         <!-- [reset]=" onCloseModal() -->
         <div>
           <p>Subiect: {{ this.dateForm.get('subiect').value }}</p>
