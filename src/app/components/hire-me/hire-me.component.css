@@ -9,7 +9,15 @@ select.ng-invalid.ng-touched {
 .warning {
   color: red;
 }
+.flex {
+  display: flex;
+  justify-content: center;
+}
 .adauga-hobby {
+  width: 100px;
+  margin-bottom: 10px;
+}
+.adauga-hobby1 {
   width: 150px;
   margin-bottom: 10px;
 }

@@ -25,6 +25,7 @@ export class HireMeComponent implements OnInit {
   modalTitle: string = 'Info Confirmation';
   modalBody: string = 'This is a Information Confirmation message';
   modalButtonColor: string = 'btn-primary';
+
   async openConfirmareModal() {
     return await this.modalComponent.open();
   }
@@ -38,6 +39,10 @@ export class HireMeComponent implements OnInit {
       nume: new FormControl(null, [
         Validators.required,
         this.Interzise.bind(this),
+      ]),
+      amount: new FormControl(null, [
+        Validators.required,
+        Validators.pattern(/^[1-9]+[0-9]*$/),
       ]),
       subiect: new FormControl(null, Validators.required),
       email: new FormControl(
@@ -57,9 +62,18 @@ export class HireMeComponent implements OnInit {
   get arrayHobyes() {
     return <FormArray>this.dateForm.get('hobbyes');
   }
+  onCloseModal() {
+    this.dateForm.reset();
+  }
+
+  onCancel() {
+    this.ruta.navigate(['/']);
+  }
   onSubmit() {
     console.log(this.dateForm);
-    this.dateForm.reset();
+    console.log('dateForm.get(email):', this.dateForm.get('email').value);
+    //this.dateForm.reset();
+    this.openConfirmareModal();
   }
   onAddHobby() {
     const control = new FormControl(null, Validators.required);

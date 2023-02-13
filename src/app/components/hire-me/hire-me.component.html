@@ -36,6 +36,17 @@
             </span>
           </div>
           <div class="form-group">
+            <label for="name">Amount</label><input class="form-control" type="text" id="amount"
+              formControlName="amount" />
+            <span id="warning" *ngIf="
+                          !dateForm.get('nume')?.valid && dateForm.get('nume')?.touched
+                        " class="help-block">
+              <span class="warning" *ngIf="dateForm.get('nume').errors['numele-este-interzis']">Numarul introdus este
+                invalid !</span>
+              <span class="warning" *ngIf="dateForm.get('nume').errors['required']">Va rog introduceti un numar !</span>
+            </span>
+          </div>
+          <div class="form-group">
             <div class="radio" *ngFor="let item of sex">
               <label>
                 <input type="radio" formControlName="sex" [value]="item" />
@@ -55,7 +66,7 @@
           </div>
           <div class="form-group" formArrayName="hobbyes">
             <h6>Your hobbyes</h6>
-            <button class="btn btn-primary btn-block adauga-hobby" type="button" (click)="onAddHobby()">
+            <button class="btn btn-primary btn-block adauga-hobby1" type="button" (click)="onAddHobby()">
               Adauga Hobby
             </button>
             <div class="form-group" *ngFor="let item of arrayHobyes.controls; let i = index">
@@ -72,17 +83,35 @@
                     dateForm.get('data')?.touched
                   " class="help-block">Va rog alegeti o data !</span>
               </div>
-              <div class="col-md-6 button">
-                <button class="btn btn-primary btn-block" type="submit" [disabled]="!dateForm.valid">
+              <div class="col-md-6 button flex ">
+                <button class="btn btn-primary btn-block adauga-hobby" type="submit">
+                  <!-- [disabled]="!dateForm.valid" -->
                   Hire Me
                 </button>
-                <span id="warning" *ngIf="!dateForm.valid && dateForm.touched" class="help-block">Aveti campuri
-                  necompletate/neselectate !</span>
+                <button class="btn btn-danger btn-block adauga-hobby" type="button" style="margin-left: 10px;"
+                  (click)="onCancel()">
+                  Cancel
+                </button>
               </div>
+              <span id="warning" *ngIf="!dateForm.valid && dateForm.touched" class="help-block">Aveti campuri
+                necompletate/neselectate !</span>
             </div>
           </div>
         </div>
       </form>
+      <confirmation-modal #confirmationModal [modalStyle]="modalStyle" [modalTitle]="'Datele trimise'"
+        [modalButtonColor]="modalButtonColor" [clabakfunction]="onCloseModal">
+        <!-- [reset]=" onCloseModal() -->
+        <div>
+          <p>Subiect: {{ this.dateForm.get('subiect').value }}</p>
+          <p>Email: {{ this.dateForm.get('email').value }}</p>
+          <p>Nume: {{ this.dateForm.get('nume').value }}</p>
+          <p>Amount: {{ this.dateForm.get('amount').value }}</p>
+          <p>Sex: {{ this.dateForm.get('sex').value}}</p>
+          <p>Mesaj: {{ this.dateForm.get('mesaj').value}}</p>
+          <p>Data: {{ this.dateForm.get('data').value }}</p>
+        </div>
+      </confirmation-modal>
       <!-- varianta de form cu template, si autodetection form cu angular - ngModel form -->
       <!-- #dateleUserului="ngModelGroup" - obtinem acces la obiectul creeat dateleUserului, sa afisam mai jos daca tot grupul este valid -->
       <!-- <form (ngSubmit)="onSubmit()" #f="ngForm">

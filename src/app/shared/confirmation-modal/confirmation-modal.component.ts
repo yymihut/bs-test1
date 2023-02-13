@@ -30,6 +30,7 @@ export class ConfirmationModalComponent implements OnInit {
   @Input() modalBody: any;
   @Input() modalButtonColor: any;
   @Input() text: any;
+  @Input() clabakfunction: any;
 
   private modalRef!: NgbModalRef;
 
@@ -45,15 +46,15 @@ export class ConfirmationModalComponent implements OnInit {
   open(): Promise<boolean> {
     return new Promise<boolean>((resolve) => {
       this.modalRef = this.modalService.open(this.modalContent, { size: 'xl' });
-      this.modalRef.result.then(
-        (result) => {
-          console.log(result);
-          this.newConfirmationEvent.emit(result);
-        },
-        (reason) => {
-          console.log(reason);
-        }
-      );
+      this.modalRef.result.then((result) => {
+        console.log(result);
+        this.clabakfunction;
+        this.newConfirmationEvent.emit(result);
+      });
     });
+  }
+
+  resetForm(res) {
+    res();
   }
 }
