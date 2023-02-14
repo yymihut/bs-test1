@@ -3,3 +3,7 @@
   color: brown;
   text-decoration-thickness: 2px;
 }
+#searchInput {
+  display: flex;
+  max-width: 300 px;
+}

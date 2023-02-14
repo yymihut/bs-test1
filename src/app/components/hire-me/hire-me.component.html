@@ -100,16 +100,16 @@
         </div>
       </form>
       <confirmation-modal #confirmationModal [modalStyle]="modalStyle" [modalTitle]="'Datele trimise'"
-        [modalButtonColor]="modalButtonColor" (resetare)="resetare()">
-        <!-- [reset]=" onCloseModal() -->
+        [modalButtonColor]="modalButtonColor" (resetareEvent)="resetare()">
+        <!-- | uppercase  -- folosim pipes -->
         <div>
-          <p>Subiect: {{ this.dateForm.get('subiect').value }}</p>
-          <p>Email: {{ this.dateForm.get('email').value }}</p>
-          <p>Nume: {{ this.dateForm.get('nume').value }}</p>
-          <p>Amount: {{ this.dateForm.get('amount').value }}</p>
-          <p>Sex: {{ this.dateForm.get('sex').value}}</p>
-          <p>Mesaj: {{ this.dateForm.get('mesaj').value}}</p>
-          <p>Data: {{ this.dateForm.get('data').value }}</p>
+          <p>Subiect: {{ this.dateForm.get('subiect').value | uppercase }}</p>
+          <p>Email: {{ this.dateForm.get('email').value | uppercase }}</p>
+          <p>Nume: {{ this.dateForm.get('nume').value | uppercase }}</p>
+          <p>Amount: {{ this.dateForm.get('amount').value | uppercase }}</p>
+          <p>Sex: {{ this.dateForm.get('sex').value | uppercase}}</p>
+          <p>Mesaj: {{ this.dateForm.get('mesaj').value | uppercase}}</p>
+          <p>Data: {{ this.dateForm.get('data').value | date:'fullDate' | uppercase }}</p>
         </div>
       </confirmation-modal>
       <!-- varianta de form cu template, si autodetection form cu angular - ngModel form -->

@@ -1,3 +1,4 @@
+import { HttpClient } from '@angular/common/http';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import {
   FormArray,
@@ -8,6 +9,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { Router } from '@angular/router';
+import { map } from 'rxjs/operators';
 import { Observable } from 'rxjs/internal/Observable';
 import { ConfirmationModalComponent } from 'src/app/shared/confirmation-modal/confirmation-modal.component';
 
@@ -17,7 +19,9 @@ import { ConfirmationModalComponent } from 'src/app/shared/confirmation-modal/co
   styleUrls: ['./hire-me.component.css'],
 })
 export class HireMeComponent implements OnInit {
-  constructor(private ruta: Router) {}
+  loadedPosts = [];
+
+  constructor(private ruta: Router, private http: HttpClient) {}
 
   @ViewChild('confirmationModal')
   private modalComponent!: ConfirmationModalComponent;
@@ -63,7 +67,17 @@ export class HireMeComponent implements OnInit {
     return <FormArray>this.dateForm.get('hobbyes');
   }
   resetare() {
+    this.onCreatePost({
+      nume: this.dateForm.get('nume').value,
+      amount: this.dateForm.get('amount').value,
+      subiect: this.dateForm.get('subiect').value,
+      email: this.dateForm.get('email').value,
+      sex: this.dateForm.get('sex').value,
+      data: this.dateForm.get('data').value,
+      hobbyes: this.dateForm.get('hobbyes').value,
+    });
     this.dateForm.reset();
+    // this.ruta.navigate(['/']);
   }
 
   onCancel() {
@@ -72,7 +86,6 @@ export class HireMeComponent implements OnInit {
   onSubmit() {
     console.log(this.dateForm);
     console.log('dateForm.get(email):', this.dateForm.get('email').value);
-    //this.dateForm.reset();
     this.openConfirmareModal();
   }
   onAddHobby() {
@@ -99,6 +112,47 @@ export class HireMeComponent implements OnInit {
       }, 1500);
     });
     return promise;
+  }
+
+  onCreatePost(postData: {
+    nume: string;
+    amount: number;
+    subiect: string;
+    email: string;
+    sex: string;
+    data: Date;
+    hobbyes: string;
+  }) {
+    //send Http request
+
+    this.http
+      .post('https://lgg6-361fc.firebaseio.com/posts.json', postData)
+      .subscribe((responseData) => {
+        console.log(responseData);
+      });
+  }
+
+  onFetchPosts() {
+    //send Http request
+  }
+
+  private fetchPosts() {
+    this.http
+      .get('https://lgg6-361fc.firebaseio.com/posts.json')
+      .pipe(
+        map((responseData) => {
+          const postArray = [];
+          for (const key in responseData) {
+            if (responseData.hasOwnProperty(key)) {
+              postArray.push({ ...responseData[key], id: key });
+            }
+          }
+          return postArray;
+        })
+      )
+      .subscribe((posts) => {
+        console.log(posts);
+      });
   }
 
   // varianta de form cu template

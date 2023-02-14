@@ -25,7 +25,7 @@ export class ConfirmationModalComponent implements OnInit {
   @ViewChild('confirmationModal')
   private modalContent!: TemplateRef<ConfirmationModalComponent>;
   @Output() newConfirmationEvent = new EventEmitter<string>();
-  @Output('resetare') resetare: EventEmitter<any> = new EventEmitter();
+  @Output() resetareEvent = new EventEmitter<any>();
 
   @Input() modalStyle: any;
   @Input() modalTitle: any;
@@ -50,11 +50,11 @@ export class ConfirmationModalComponent implements OnInit {
       this.modalRef.result.then(
         (result) => {
           console.log(result);
-          this.resetare.emit();
+          this.resetareEvent.emit();
           this.newConfirmationEvent.emit(result);
         },
-        (reason) => {
-          console.log(reason);
+        (reject) => {
+          console.log(reject);
         }
       );
     });

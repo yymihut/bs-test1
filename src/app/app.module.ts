@@ -19,6 +19,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { CarouselComponent } from './components/carousel/carousel.component';
+import { FilterPipe } from './filter.pipe';
+import { HttpClientModule } from '@angular/common/http';
 
 const routingulAplicatiei: Routes = [
   { path: '', component: HomeComponent },
@@ -42,6 +44,7 @@ const routingulAplicatiei: Routes = [
     NotfoundPageComponent,
     FloatingCreditcardComponent,
     CarouselComponent,
+    FilterPipe,
   ],
   imports: [
     CommonModule,
@@ -55,6 +58,7 @@ const routingulAplicatiei: Routes = [
     }), //la incarcarea paginii o incarca de sus
     SharedModule,
     BrowserAnimationsModule, //am creeat un modul pt sheruirea mai multor componente
+    HttpClientModule,
   ],
   providers: [ImageService],
   bootstrap: [AppComponent],
