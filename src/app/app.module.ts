@@ -21,11 +21,13 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { CarouselComponent } from './components/carousel/carousel.component';
 import { FilterPipe } from './filter.pipe';
 import { HttpClientModule } from '@angular/common/http';
+import { MesajeComponent } from './mesaje/mesaje.component';
 
 const routingulAplicatiei: Routes = [
   { path: '', component: HomeComponent },
   { path: 'projects', component: ProjectsComponent },
   { path: 'hireme', component: HireMeComponent },
+  { path: 'mesaje', component: MesajeComponent },
   { path: 'cv', component: CVComponent },
   { path: 'not-found', component: NotfoundPageComponent },
   { path: '**', redirectTo: '/not-found' },
@@ -45,6 +47,7 @@ const routingulAplicatiei: Routes = [
     FloatingCreditcardComponent,
     CarouselComponent,
     FilterPipe,
+    MesajeComponent,
   ],
   imports: [
     CommonModule,

@@ -1,16 +1,8 @@
-import { HttpClient } from '@angular/common/http';
 import { Component, OnInit, ViewChild } from '@angular/core';
-import {
-  FormArray,
-  FormControl,
-  FormGroup,
-  NgForm,
-  NgSelectOption,
-  Validators,
-} from '@angular/forms';
+import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { map } from 'rxjs/operators';
-import { Observable } from 'rxjs/internal/Observable';
+import { Post } from 'src/app/services/post.model';
+import { PostService } from 'src/app/services/post.service';
 import { ConfirmationModalComponent } from 'src/app/shared/confirmation-modal/confirmation-modal.component';
 
 @Component({
@@ -21,7 +13,7 @@ import { ConfirmationModalComponent } from 'src/app/shared/confirmation-modal/co
 export class HireMeComponent implements OnInit {
   loadedPosts = [];
 
-  constructor(private ruta: Router, private http: HttpClient) {}
+  constructor(private ruta: Router, private postService: PostService) {}
 
   @ViewChild('confirmationModal')
   private modalComponent!: ConfirmationModalComponent;
@@ -114,73 +106,16 @@ export class HireMeComponent implements OnInit {
     return promise;
   }
 
-  onCreatePost(postData: {
-    nume: string;
-    amount: number;
-    subiect: string;
-    email: string;
-    sex: string;
-    data: Date;
-    hobbyes: string;
-  }) {
+  onCreatePost(postData: Post) {
     //send Http request
-
-    this.http
-      .post('https://lgg6-361fc.firebaseio.com/posts.json', postData)
-      .subscribe((responseData) => {
-        console.log(responseData);
-      });
+    this.postService.createPost(
+      postData.nume,
+      postData.amount,
+      postData.subiect,
+      postData.email,
+      postData.sex,
+      postData.data,
+      postData.hobbyes
+    );
   }
-
-  onFetchPosts() {
-    //send Http request
-  }
-
-  private fetchPosts() {
-    this.http
-      .get('https://lgg6-361fc.firebaseio.com/posts.json')
-      .pipe(
-        map((responseData) => {
-          const postArray = [];
-          for (const key in responseData) {
-            if (responseData.hasOwnProperty(key)) {
-              postArray.push({ ...responseData[key], id: key });
-            }
-          }
-          return postArray;
-        })
-      )
-      .subscribe((posts) => {
-        console.log(posts);
-      });
-  }
-
-  // varianta de form cu template
-  /*
-  // abordarea cu ViewChild, se face pt a avea acces la form inainte de a da submit
-  @ViewChild('f')
-  dateForm!: NgForm;
-  sex = ['barbat', 'femeie'];
-  //trimis = false;
-
-  user = {
-    subiect: '',
-    email: '',
-    sex: '',
-    mesaj: '',
-    data: '',
-  };
-
-  onSubmit() {
-    //dupa ce se trimite info la server, se navigheaza la pagina principala
-    // this.ruta.navigate(['/']);
-    console.log(this.dateForm);
-    this.openConfirmareModal();
-    this.user.subiect = this.dateForm.value.dateleUserului.selectia;
-    this.user.email = this.dateForm.value.dateleUserului.email;
-    this.user.sex = this.dateForm.value.dateleUserului.sexul;
-    this.user.mesaj = this.dateForm.value.dateleUserului.mesaj;
-    this.user.data = this.dateForm.value.dateleUserului.data;
-  }
-  */
 }

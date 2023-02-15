@@ -7,6 +7,5 @@ import { Component } from '@angular/core';
 })
 export class NavbarComponent {
   title = 'instant-search';
-
   public searchInput: string;
 }
