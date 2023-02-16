@@ -1,17 +1,18 @@
-import { Injectable, Output } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Post } from './post.model';
 import { map } from 'rxjs/operators';
-import { Subject, Observable } from 'rxjs';
+import { Subject } from 'rxjs';
 
-@Injectable({ providedIn: 'root' })
+@Injectable({ providedIn: 'root' }) //{ providedIn: 'root' } - daca facem asta nu mai trebuie trecut serviciul in app.module.ts
 export class PostService {
   fetchedPosts = new Subject<any>();
+  eroarea = new Subject<any>();
 
   constructor(private http: HttpClient) {}
 
   createPost(nume, amount, subiect, email, sex, data, hobbyes) {
-    //send Http request
+    //send Http request - folosit in  hire-me component
     const postData: Post = {
       nume: nume,
       amount: amount,
@@ -23,13 +24,18 @@ export class PostService {
     };
     this.http
       .post('https://lgg6-361fc.firebaseio.com/posts.json', postData)
-      .subscribe((responseData) => {
-        //console.log(responseData);
+      .subscribe({
+        next: (responseData) => {
+          console.log(responseData);
+        },
+        error: (err) => {
+          this.eroarea.next(err);
+        },
       });
   }
 
   fetchPosts() {
-    //send Http request
+    //send Http request  - folosit in  mesaje component
     this.http
       .get<{ [key: string]: Post }>(
         'https://lgg6-361fc.firebaseio.com/posts.json'
@@ -48,20 +54,19 @@ export class PostService {
       )
       .subscribe({
         next: (posts) => {
-          // console.log('la post service:', posts);
           this.fetchedPosts.next(posts);
         },
         error: (err) => {
-          console.log(err.message);
+          this.eroarea.next(err);
         },
       });
   }
 
   deletePost(id) {
-    //send Http request
+    //send Http request- folosit in  mesaje component
     //console.log('deletePost(id)', id);
     return this.http.delete(
       `https://lgg6-361fc.firebaseio.com/posts/${id}.json`
-    ); //ca sa fim informati in comopent despre stergere
+    ); //ca sa fim informati in component despre stergere
   }
 }

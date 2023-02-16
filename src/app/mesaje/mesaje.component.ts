@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { PostService } from '../services/post.service';
+import { PostService } from '../services/http.service';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -16,6 +16,10 @@ export class MesajeComponent implements OnInit, OnDestroy {
   constructor(private postservice: PostService) {
     this.isFetching = true; // este pt load indicator, spiner
     this.postservice.fetchPosts();
+    this.subscription = this.postservice.eroarea.subscribe((err) => {
+      //console.log(err.message);
+      this.error = err;
+    });
   }
 
   ngOnInit() {
@@ -29,13 +33,11 @@ export class MesajeComponent implements OnInit, OnDestroy {
       next: (posts) => {
         this.loadedPosts = posts;
         this.isFetching = false;
-        console.log('mesaje:', this.loadedPosts);
-      },
-      error: (err) => {
-        this.error = err.message;
+        //console.log('mesaje:', this.loadedPosts);
       },
     });
   }
+
   onDelete(id) {
     //send Http request for deletion
     this.postservice.deletePost(id).subscribe();
@@ -45,6 +47,10 @@ export class MesajeComponent implements OnInit, OnDestroy {
       }),
       1
     );
+  }
+  inchideEroarea() {
+    this.error = null;
+    this.isFetching = false;
   }
 
   ngOnDestroy() {

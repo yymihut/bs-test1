@@ -95,6 +95,14 @@
               </div>
               <span id="warning" *ngIf="!dateForm.valid && dateForm.touched" class="help-block">Aveti campuri
                 necompletate/neselectate !</span>
+              <div class="alert alert-danger" *ngIf="error">
+                <h1>A aparut o eroare</h1>
+                <p>{{error.message}}</p>
+                <p>{{error.error.error}}</p>
+                <button class="btn btn-danger" type="button" style="margin-left: 10px;" (click)="inchideEroarea()">
+                  Ok
+                </button>
+              </div>
             </div>
           </div>
         </div>

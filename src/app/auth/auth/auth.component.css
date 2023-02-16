@@ -1,0 +1,30 @@
+input.ng-invalid.ng-touched {
+  border: 2px solid red;
+}
+#warning {
+  color: red;
+}
+.warning {
+  color: red;
+}
+.flex {
+  display: flex;
+  justify-content: center;
+}
+.adauga-hobby {
+  width: 100px;
+  margin-bottom: 10px;
+}
+.adauga-hobby1 {
+  width: 150px;
+  margin-bottom: 10px;
+}
+::ng-deep ngb-modal-backdrop {
+  z-index: 600 !important;
+}
+button {
+  margin-top: 15px;
+}
+#inregistreazate {
+  margin-top: 50px;
+}

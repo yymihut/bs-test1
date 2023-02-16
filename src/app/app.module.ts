@@ -20,8 +20,11 @@ import { CommonModule } from '@angular/common';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { CarouselComponent } from './components/carousel/carousel.component';
 import { FilterPipe } from './filter.pipe';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { MesajeComponent } from './mesaje/mesaje.component';
+import { AuthInterceptorService } from './services/auth-interceptor.service';
+import { LoggingInterceptorService } from './services/logging-interceptor.service';
+import { AuthComponent } from './auth/auth/auth.component';
 
 const routingulAplicatiei: Routes = [
   { path: '', component: HomeComponent },
@@ -30,6 +33,7 @@ const routingulAplicatiei: Routes = [
   { path: 'mesaje', component: MesajeComponent },
   { path: 'cv', component: CVComponent },
   { path: 'not-found', component: NotfoundPageComponent },
+  { path: 'auth', component: AuthComponent },
   { path: '**', redirectTo: '/not-found' },
 ];
 
@@ -48,6 +52,7 @@ const routingulAplicatiei: Routes = [
     CarouselComponent,
     FilterPipe,
     MesajeComponent,
+    AuthComponent,
   ],
   imports: [
     CommonModule,
@@ -63,7 +68,21 @@ const routingulAplicatiei: Routes = [
     BrowserAnimationsModule, //am creeat un modul pt sheruirea mai multor componente
     HttpClientModule,
   ],
-  providers: [ImageService],
+  providers: [
+    ImageService,
+    [
+      {
+        provide: HTTP_INTERCEPTORS,
+        useClass: AuthInterceptorService,
+        multi: true,
+      },
+      {
+        provide: HTTP_INTERCEPTORS,
+        useClass: LoggingInterceptorService,
+        multi: true,
+      },
+    ],
+  ],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

@@ -1,17 +1,20 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
 import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Post } from 'src/app/services/post.model';
-import { PostService } from 'src/app/services/post.service';
+import { PostService } from 'src/app/services/http.service';
 import { ConfirmationModalComponent } from 'src/app/shared/confirmation-modal/confirmation-modal.component';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-hire-me',
   templateUrl: './hire-me.component.html',
   styleUrls: ['./hire-me.component.css'],
 })
-export class HireMeComponent implements OnInit {
+export class HireMeComponent implements OnInit, OnDestroy {
   loadedPosts = [];
+  error = null;
+  subscription: Subscription;
 
   constructor(private ruta: Router, private postService: PostService) {}
 
@@ -50,6 +53,10 @@ export class HireMeComponent implements OnInit {
       mesaj: new FormControl(null, Validators.required),
       data: new FormControl(null, Validators.required),
       hobbyes: new FormArray([]),
+    });
+    this.subscription = this.postService.eroarea.subscribe((err) => {
+      console.log(err.message);
+      this.error = err;
     });
     // valuechanges and status - aflam date despre form in timp real
     // this.dateForm.valueChanges.subscribe((value) => console.log(value));
@@ -117,5 +124,12 @@ export class HireMeComponent implements OnInit {
       postData.data,
       postData.hobbyes
     );
+  }
+  inchideEroarea() {
+    this.error = null;
+  }
+  ngOnDestroy() {
+    // unsubscribe to ensure no memory leaks
+    this.subscription.unsubscribe();
   }
 }
