@@ -28,3 +28,8 @@ button {
 #inregistreazate {
   margin-top: 50px;
 }
+#buttonSwitch {
+  margin-bottom: 15px;
+  background-color: grey;
+  color: white;
+}

@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from './auth.service';
 
@@ -9,8 +9,10 @@ import { AuthService } from './auth.service';
   styleUrls: ['./auth.component.css'],
 })
 export class AuthComponent implements OnInit, OnDestroy {
+  isLoading = false;
   isLoginMode = true;
   dateForm!: FormGroup;
+  errLogin = null;
 
   constructor(private ruta: Router, private authService: AuthService) {}
 
@@ -31,15 +33,30 @@ export class AuthComponent implements OnInit, OnDestroy {
     }
     const email = this.dateForm.get('email').value;
     const password = this.dateForm.get('password').value;
+
+    this.isLoading = true;
     if (this.isLoginMode) {
-      //....
-    } else {
-      this.authService.signup(email, password).subscribe({
+      this.authService.logIn(email, password).subscribe({
         next: (responseData) => {
+          console.log('signIn response:', responseData);
+          this.isLoading = false;
+          this.ruta.navigate(['/mesaje']);
+        },
+        error: (err) => {
+          console.log('la signIN : ', err);
+          this.isLoading = false;
+          this.errLogin = err;
+        },
+      });
+    } else {
+      this.authService.signUp(email, password).subscribe({
+        next: (responseData) => {
+          this.isLoading = false;
           console.log(responseData);
         },
         error: (err) => {
           console.log(err);
+          this.isLoading = false;
         },
       });
     }
@@ -48,6 +65,8 @@ export class AuthComponent implements OnInit, OnDestroy {
 
   onSwitchMode() {
     this.isLoginMode = !this.isLoginMode;
+    this.dateForm.reset();
+    this.errLogin = null;
   }
 
   onCancel() {

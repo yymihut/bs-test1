@@ -54,20 +54,6 @@ const routingulAplicatiei: Routes = [
     MesajeComponent,
     AuthComponent,
   ],
-  imports: [
-    CommonModule,
-    FormsModule,
-    ReactiveFormsModule,
-    BrowserModule,
-    NgbModule,
-    CarouselModule,
-    RouterModule.forRoot(routingulAplicatiei, {
-      scrollPositionRestoration: 'enabled',
-    }), //la incarcarea paginii o incarca de sus
-    SharedModule,
-    BrowserAnimationsModule, //am creeat un modul pt sheruirea mai multor componente
-    HttpClientModule,
-  ],
   providers: [
     ImageService,
     [
@@ -84,5 +70,19 @@ const routingulAplicatiei: Routes = [
     ],
   ],
   bootstrap: [AppComponent],
+  imports: [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    BrowserModule,
+    NgbModule,
+    CarouselModule,
+    RouterModule.forRoot(routingulAplicatiei, {
+      scrollPositionRestoration: 'enabled',
+    }),
+    SharedModule,
+    BrowserAnimationsModule,
+    HttpClientModule,
+  ],
 })
 export class AppModule {}
