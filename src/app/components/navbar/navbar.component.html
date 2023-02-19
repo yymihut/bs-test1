@@ -2,8 +2,11 @@
   <div class="container">
     <div style="display: flex; align-items: center;">
       <a class="navbar-brand logo" routerLink="/">Brand</a>
-      <button class="btn btn-primary " routerLink="/auth" style="margin-left: 10px;">
+      <button class="btn btn-primary " routerLink="/auth" style="margin-left: 10px;" *ngIf="!esteLogat">
         Login / Sign Up
+      </button>
+      <button class="btn btn-primary " style="margin-left: 10px;" *ngIf="esteLogat">
+        Logout
       </button>
     </div>
     <button data-toggle="collapse" class="navbar-toggler" data-target="#navbarNav" aria-expanded="false">
@@ -15,8 +18,8 @@
         <li class="nav-item" role="presentation" routerLinkActive="activa" [routerLinkActiveOptions]="{ exact: true }">
           <a class="nav-link" routerLink="/">Home</a>
         </li>
-        <li role="presentation" routerLinkActive="activa">
-          <a class="nav-link" routerLink="/projects">Projects</a>
+        <li role="presentation" routerLinkActive="activa"*ngIf="esteLogat">
+          <a class="nav-link" routerLink="/projects" >Projects</a>
         </li>
         <li class="nav-item" role="presentation" routerLinkActive="activa">
           <a class="nav-link" routerLink="/cv">CV</a>
@@ -24,7 +27,7 @@
         <li class="nav-item" role="presentation" routerLinkActive="activa">
           <a class="nav-link" routerLink="/hireme">Contact</a>
         </li>
-        <li class="nav-item" role="presentation" routerLinkActive="activa">
+        <li class="nav-item" role="presentation" routerLinkActive="activa" *ngIf="esteLogat">
           <a class="nav-link" routerLink="/mesaje">Mesaje</a>
         </li>
       </ul>

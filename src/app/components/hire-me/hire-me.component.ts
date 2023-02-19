@@ -83,8 +83,8 @@ export class HireMeComponent implements OnInit, OnDestroy {
     this.ruta.navigate(['/']);
   }
   onSubmit() {
-    console.log(this.dateForm);
-    console.log('dateForm.get(email):', this.dateForm.get('email').value);
+    //console.log(this.dateForm);
+    //console.log('dateForm.get(email):', this.dateForm.get('email').value);
     this.openConfirmareModal();
   }
   onAddHobby() {
@@ -114,7 +114,7 @@ export class HireMeComponent implements OnInit, OnDestroy {
   }
 
   onCreatePost(postData: Post) {
-    //send Http request
+    //send Http request prin serviciul http
     this.postService.createPost(
       postData.nume,
       postData.amount,
@@ -127,6 +127,7 @@ export class HireMeComponent implements OnInit, OnDestroy {
   }
   inchideEroarea() {
     this.error = null;
+    this.ruta.navigate(['/auth']);
   }
   ngOnDestroy() {
     // unsubscribe to ensure no memory leaks

@@ -7,10 +7,10 @@ import { tap } from 'rxjs';
 
 export class LoggingInterceptorService implements HttpInterceptor {
   intercept(req: HttpRequest<any>, next: HttpHandler) {
-    console.log('requestul logging este pe drum');
+    //console.log('requestul logging este pe drum');
     return next.handle(req).pipe(
       tap((event) => {
-        console.log('eq).pipe(tap(event', event);
+        //console.log('eq).pipe(tap(event', event);
       })
     );
   }

@@ -1,7 +1,8 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { AuthService } from './auth.service';
+import { Observable } from 'rxjs';
+import { AuthResponseData, AuthService } from './auth.service';
 
 @Component({
   selector: 'app-auth',
@@ -27,39 +28,36 @@ export class AuthComponent implements OnInit, OnDestroy {
   }
 
   onSubmit() {
-    console.log(this.dateForm);
+    //console.log(this.dateForm);
+    let authObs: Observable<AuthResponseData>;
+
     if (!this.dateForm.valid) {
       return;
     }
+
     const email = this.dateForm.get('email').value;
     const password = this.dateForm.get('password').value;
 
     this.isLoading = true;
     if (this.isLoginMode) {
-      this.authService.logIn(email, password).subscribe({
-        next: (responseData) => {
-          console.log('signIn response:', responseData);
-          this.isLoading = false;
-          this.ruta.navigate(['/mesaje']);
-        },
-        error: (err) => {
-          console.log('la signIN : ', err);
-          this.isLoading = false;
-          this.errLogin = err;
-        },
-      });
+      authObs = this.authService.logIn(email, password);
     } else {
-      this.authService.signUp(email, password).subscribe({
-        next: (responseData) => {
-          this.isLoading = false;
-          console.log(responseData);
-        },
-        error: (err) => {
-          console.log(err);
-          this.isLoading = false;
-        },
-      });
+      authObs = this.authService.signUp(email, password);
     }
+
+    authObs.subscribe({
+      next: (responseData) => {
+        //console.log('responseData',responseData);
+        this.isLoading = false;
+        this.ruta.navigate(['/mesaje']);
+      },
+      error: (err) => {
+        //console.log('responseData error',err);
+        this.isLoading = false;
+        this.errLogin = err;
+      },
+    });
+
     this.dateForm.reset();
   }
 

@@ -26,7 +26,7 @@ export class PostService {
       .post('https://lgg6-361fc.firebaseio.com/posts.json', postData)
       .subscribe({
         next: (responseData) => {
-          console.log(responseData);
+          console.log('.post(https://lgg6-361fc.firebaseio.com/posts.json',responseData);
         },
         error: (err) => {
           this.eroarea.next(err);
@@ -36,6 +36,7 @@ export class PostService {
 
   fetchPosts() {
     //send Http request  - folosit in  mesaje component
+    //take(1) - ia o singura data valoarea apoi face unsubscribe
     this.http
       .get<{ [key: string]: Post }>(
         'https://lgg6-361fc.firebaseio.com/posts.json'
