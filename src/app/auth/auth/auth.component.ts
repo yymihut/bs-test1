@@ -3,11 +3,18 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { AuthResponseData, AuthService } from './auth.service';
-
 import firebase from 'firebase/compat/app';
 import * as firebaseui from 'firebaseui';
 import { initializeApp } from 'firebase/app';
 import { getAnalytics } from 'firebase/analytics';
+
+//import 'firebaseui/dist/firebaseui.css';
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+} from 'firebase/auth';
+
 const firebaseConfig = {
   apiKey: 'AIzaSyBJ8fRQ7uJ05LRwHbUWF1e52_slV4thHyI',
   authDomain: 'lgg6-361fc.firebaseapp.com',
@@ -20,13 +27,7 @@ const firebaseConfig = {
 };
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
-//import 'firebaseui/dist/firebaseui.css';
-import {
-  getAuth,
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-} from 'firebase/auth';
-//
+
 @Component({
   selector: 'app-auth',
   templateUrl: './auth.component.html',
@@ -58,12 +59,12 @@ export class AuthComponent implements OnInit, OnDestroy {
     const email = this.dateForm.get('email').value;
     const password = this.dateForm.get('password').value;
     const auth = getAuth();
+
     if (!this.isLoginMode) {
       createUserWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
           // Signed in
           const user = userCredential.user;
-
           this.isLoading = false;
           this.ruta.navigate(['/mesaje']);
           // ...

@@ -75,7 +75,7 @@ export class AuthService {
   private handleAuthentication(
     email: string,
     localId: string,
-    idToken: string,
+    accessToken: string,
     expiresIn: number,
     displayName: string
   ) {
@@ -83,7 +83,13 @@ export class AuthService {
       new Date().getTime() + +expiresIn * 1000
       //new Date().getTime() - timpul de la inceputul anului 1970 + timpul de expirare de la firebase
     );
-    const user = new User(email, localId, idToken, expirationDate, displayName);
+    const user = new User(
+      email,
+      localId,
+      accessToken,
+      expirationDate,
+      displayName
+    );
     this.user.next(user);
   }
 
