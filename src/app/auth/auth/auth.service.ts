@@ -3,7 +3,7 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { BehaviorSubject, catchError, Subject, tap, throwError } from 'rxjs';
 import { User } from './user.model';
 
-export  interface AuthResponseData {
+export interface AuthResponseData {
   //Response Payload - documentatia firebase: https://firebase.google.com/docs/reference/rest/auth#section-create-email-password
   idToken: string;
   email: string;
@@ -11,13 +11,13 @@ export  interface AuthResponseData {
   expiresIn: string;
   localId: string;
   registered?: boolean;
-  displayName: string,
+  displayName: string;
 }
 
 @Injectable({ providedIn: 'root' }) //{ providedIn: 'root' } - daca facem asta nu mai trebuie trecut serviciul in app.module.ts
 export class AuthService {
- // user = new Subject<User>(); //primim datele noi de fiecare data cand ele se schimba
- user = new BehaviorSubject<User>(null);  //ne da acces si la datele emise anterior
+  // user = new Subject<User>(); //primim datele noi de fiecare data cand ele se schimba
+  user = new BehaviorSubject<User>(null); //ne da acces si la datele emise anterior
 
   constructor(private http: HttpClient) {}
 
@@ -35,7 +35,7 @@ export class AuthService {
       .pipe(
         catchError(this.handleError),
         tap((respData) => {
-          console.log('sign up, responseData',respData )
+          console.log('sign up, responseData', respData);
           this.handleAuthentication(
             respData.email,
             respData.localId,
