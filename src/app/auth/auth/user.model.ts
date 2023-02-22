@@ -1,14 +1,17 @@
 export class User {
   constructor(
+    private _token: string,
     private _uid: string,
     public email: string,
     public displayName: string
   ) {}
 
   get token() {
-    return this._uid;
+    return this._token;
   }
 }
+
+
 
 // export class User {
 //   constructor(

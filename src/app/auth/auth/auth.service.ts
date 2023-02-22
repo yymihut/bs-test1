@@ -46,7 +46,7 @@ const analytics = getAnalytics(app);
 export class AuthService {
   // user = new Subject<User>(); //primim datele noi de fiecare data cand ele se schimba
   user = new BehaviorSubject<User>(null); //ne da acces si la datele emise anterior
-
+  token = null
   constructor(private http: HttpClient) {}
 
   onSignUp(email, password) {
@@ -70,6 +70,7 @@ export class AuthService {
 
   onSignIn(email, password) {
     const auth = getAuth();
+
     signInWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
         // Signed in
@@ -82,8 +83,10 @@ export class AuthService {
           user.email,
           user
         );
+        auth.currentUser.getIdToken().then((e) => {
+          this.token = e;})
         console.log('analytics', analytics);
-        this.handleAuthentication(user.uid, user.email, user.displayName);
+        this.handleAuthentication(this.token, user.uid, user.email, user.displayName);
         // ...
       })
       .catch((error) => {
@@ -93,11 +96,12 @@ export class AuthService {
       });
   }
   private handleAuthentication(
+    token: string,
     uid: string,
     displayName: string,
     email: string
   ) {
-    const user = new User(uid, email, displayName);
+    const user = new User(token, uid, email, displayName);
     this.user.next(user);
   }
 
