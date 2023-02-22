@@ -1,8 +1,9 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { AuthResponseData, AuthService } from './auth.service';
+
 import firebase from 'firebase/compat/app';
 import * as firebaseui from 'firebaseui';
 import { initializeApp } from 'firebase/app';
@@ -14,6 +15,7 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
 } from 'firebase/auth';
+import { User } from './user.model';
 
 const firebaseConfig = {
   apiKey: 'AIzaSyBJ8fRQ7uJ05LRwHbUWF1e52_slV4thHyI',
@@ -28,6 +30,17 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 
+export interface AuthResponseData2 {
+  //Response Payload - documentatia firebase: https://firebase.google.com/docs/reference/rest/auth#section-create-email-password
+  idToken: string;
+  email: string;
+  refreshToken: string;
+  expiresIn: string;
+  localId: string;
+  registered?: boolean;
+  displayName: string;
+}
+
 @Component({
   selector: 'app-auth',
   templateUrl: './auth.component.html',
@@ -38,6 +51,7 @@ export class AuthComponent implements OnInit, OnDestroy {
   isLoginMode = true;
   dateForm!: FormGroup;
   errLogin = null;
+  user = new BehaviorSubject<User>(null); //ne da acces si la datele emise anterior
 
   constructor(private ruta: Router, private authService: AuthService) {}
 
@@ -66,7 +80,9 @@ export class AuthComponent implements OnInit, OnDestroy {
           // Signed in
           const user = userCredential.user;
           this.isLoading = false;
-          this.ruta.navigate(['/mesaje']);
+          console.log('la login in am primit :', user);
+          console.log('la login auth :', auth);
+          //this.ruta.navigate(['/mesaje']);
           // ...
         })
         .catch((error) => {
@@ -80,7 +96,8 @@ export class AuthComponent implements OnInit, OnDestroy {
         .then((userCredential) => {
           // Signed in
           const user = userCredential.user;
-          console.log('la sign in am primit :', user);
+          //console.log('la sign in am primit :', user);
+          console.log('la sign auth :', auth.currentUser.getIdToken());
           this.isLoading = false;
           // ...
         })
@@ -123,6 +140,27 @@ export class AuthComponent implements OnInit, OnDestroy {
     // });
 
     // this.dateForm.reset();
+  }
+
+  private handleAuthentication(
+    email: string,
+    localId: string,
+    accessToken: string,
+    expiresIn: number,
+    displayName: string
+  ) {
+    const expirationDate = new Date(
+      new Date().getTime() + +expiresIn * 1000
+      //new Date().getTime() - timpul de la inceputul anului 1970 + timpul de expirare de la firebase
+    );
+    const user = new User(
+      email,
+      localId,
+      accessToken,
+      expirationDate,
+      displayName
+    );
+    this.user.next(user);
   }
 
   onSwitchMode() {
