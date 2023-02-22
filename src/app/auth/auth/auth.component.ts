@@ -97,7 +97,13 @@ export class AuthComponent implements OnInit, OnDestroy {
           // Signed in
           const user = userCredential.user;
           //console.log('la sign in am primit :', user);
-          console.log('la sign auth :', auth.currentUser.getIdToken());
+          console.log(
+            'la sign auth :',
+            auth.currentUser.getIdToken().then((e) => {
+              console.log(e);
+            })
+          );
+          console.log('la sign auth 2:', auth.currentUser.providerId);
           this.isLoading = false;
           // ...
         })
