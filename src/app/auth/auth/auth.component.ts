@@ -2,44 +2,8 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { AuthResponseData, AuthService } from './auth.service';
+import { AuthService } from './auth.service';
 
-import firebase from 'firebase/compat/app';
-import * as firebaseui from 'firebaseui';
-import { initializeApp } from 'firebase/app';
-import { getAnalytics } from 'firebase/analytics';
-
-//import 'firebaseui/dist/firebaseui.css';
-import {
-  getAuth,
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-} from 'firebase/auth';
-import { User } from './user.model';
-
-const firebaseConfig = {
-  apiKey: 'AIzaSyBJ8fRQ7uJ05LRwHbUWF1e52_slV4thHyI',
-  authDomain: 'lgg6-361fc.firebaseapp.com',
-  databaseURL: 'https://lgg6-361fc.firebaseio.com',
-  projectId: 'lgg6-361fc',
-  storageBucket: 'lgg6-361fc.appspot.com',
-  messagingSenderId: '737254172140',
-  appId: '1:737254172140:web:ddae032ac5b7587bcf8cc9',
-  measurementId: 'G-0NH9DECZE5',
-};
-const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
-
-export interface AuthResponseData2 {
-  //Response Payload - documentatia firebase: https://firebase.google.com/docs/reference/rest/auth#section-create-email-password
-  idToken: string;
-  email: string;
-  refreshToken: string;
-  expiresIn: string;
-  localId: string;
-  registered?: boolean;
-  displayName: string;
-}
 
 @Component({
   selector: 'app-auth',
@@ -51,7 +15,6 @@ export class AuthComponent implements OnInit, OnDestroy {
   isLoginMode = true;
   dateForm!: FormGroup;
   errLogin = null;
-  user = new BehaviorSubject<User>(null); //ne da acces si la datele emise anterior
 
   constructor(private ruta: Router, private authService: AuthService) {}
 
@@ -72,46 +35,13 @@ export class AuthComponent implements OnInit, OnDestroy {
     }
     const email = this.dateForm.get('email').value;
     const password = this.dateForm.get('password').value;
-    const auth = getAuth();
 
     if (!this.isLoginMode) {
-      createUserWithEmailAndPassword(auth, email, password)
-        .then((userCredential) => {
-          // Signed in
-          const user = userCredential.user;
-          this.isLoading = false;
-          console.log('la login in am primit :', user);
-          console.log('la login auth :', auth);
-          //this.ruta.navigate(['/mesaje']);
-          // ...
-        })
-        .catch((error) => {
-          const errorMessage = error.message;
-          this.isLoading = false;
-          this.errLogin = errorMessage;
-          // ..
-        });
+      this.isLoading = false;
+      this.authService.onSignUp(email, password)
     } else {
-      signInWithEmailAndPassword(auth, email, password)
-        .then((userCredential) => {
-          // Signed in
-          const user = userCredential.user;
-          //console.log('la sign in am primit :', user);
-          console.log(
-            'la sign auth :',
-            auth.currentUser.getIdToken().then((e) => {
-              console.log(e);
-            })
-          );
-          console.log('la sign auth 2:', auth.currentUser.providerId);
-          this.isLoading = false;
-          // ...
-        })
-        .catch((error) => {
-          const errorMessage = error.message;
-          this.isLoading = false;
-          this.errLogin = errorMessage;
-        });
+      this.isLoading = false;
+      this.authService.onSignIn(email, password)
     }
 
     this.dateForm.reset();
@@ -148,26 +78,7 @@ export class AuthComponent implements OnInit, OnDestroy {
     // this.dateForm.reset();
   }
 
-  private handleAuthentication(
-    email: string,
-    localId: string,
-    accessToken: string,
-    expiresIn: number,
-    displayName: string
-  ) {
-    const expirationDate = new Date(
-      new Date().getTime() + +expiresIn * 1000
-      //new Date().getTime() - timpul de la inceputul anului 1970 + timpul de expirare de la firebase
-    );
-    const user = new User(
-      email,
-      localId,
-      accessToken,
-      expirationDate,
-      displayName
-    );
-    this.user.next(user);
-  }
+
 
   onSwitchMode() {
     this.isLoginMode = !this.isLoginMode;

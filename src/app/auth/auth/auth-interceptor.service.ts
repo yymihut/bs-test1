@@ -26,6 +26,7 @@ export class AuthInterceptorService implements HttpInterceptor {
         console.log('auth-interceptor: user.token ->este', user.token);
         //'auth'
         return next.handle(modifiedRequest);
+
       })
     );
   }
