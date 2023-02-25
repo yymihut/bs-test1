@@ -9,9 +9,11 @@ export class User {
   get token() {
     return this._token;
   }
+
+  get uid() {
+    return this._uid;
+  }
 }
-
-
 
 // export class User {
 //   constructor(

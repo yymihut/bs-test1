@@ -26,7 +26,10 @@ export class PostService {
       .post('https://lgg6-361fc.firebaseio.com/posts.json', postData)
       .subscribe({
         next: (responseData) => {
-          console.log('.post(https://lgg6-361fc.firebaseio.com/posts.json',responseData);
+          console.log(
+            '.post(https://lgg6-361fc.firebaseio.com/posts.json',
+            responseData
+          );
         },
         error: (err) => {
           this.eroarea.next(err);

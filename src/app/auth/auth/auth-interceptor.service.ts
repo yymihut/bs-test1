@@ -25,16 +25,15 @@ export class AuthInterceptorService implements HttpInterceptor {
           return next.handle(req);
         }
         const modifiedRequest = req.clone({
-          params: new HttpParams().set('auth', user.token),
+          params: new HttpParams().set('auth', user.uid),
         });
-        console.log('auth-interceptor: user.token ->este', user.token);
+        console.log('auth-interceptor: user.token ->este', user.uid);
         //'auth'
         return next.handle(modifiedRequest);
       })
     );
   }
 }
-
 
 // export class AuthInterceptorService implements HttpInterceptor {
 //   constructor(private authService: AuthService) {}
