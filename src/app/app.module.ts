@@ -22,9 +22,11 @@ import { CarouselComponent } from './components/carousel/carousel.component';
 import { FilterPipe } from './filter.pipe';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { MesajeComponent } from './mesaje/mesaje.component';
-import { AuthInterceptorService } from './auth/auth/auth-interceptor.service';
+import { AuthInterceptorService } from './services/auth-interceptor.service';
 import { LoggingInterceptorService } from './services/logging-interceptor.service';
 import { AuthComponent } from './auth/auth/auth.component';
+import { AngularFireModule } from '@angular/fire/compat';
+import { environment } from 'src/environments/environment';
 
 const routingulAplicatiei: Routes = [
   { path: '', component: HomeComponent },
@@ -83,6 +85,7 @@ const routingulAplicatiei: Routes = [
     SharedModule,
     BrowserAnimationsModule,
     HttpClientModule,
+    AngularFireModule.initializeApp(environment.firebase),
   ],
 })
 export class AppModule {}

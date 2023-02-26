@@ -2,8 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { AuthService } from './auth.service';
-
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-auth',
@@ -38,10 +37,11 @@ export class AuthComponent implements OnInit, OnDestroy {
 
     if (!this.isLoginMode) {
       this.isLoading = false;
-      this.authService.onSignUp(email, password)
+      this.authService.onSignUp(email, password);
+      this.isLoginMode = true;
     } else {
       this.isLoading = false;
-      this.authService.onSignIn(email, password)
+      this.authService.onSignIn(email, password);
     }
 
     this.dateForm.reset();
@@ -77,8 +77,6 @@ export class AuthComponent implements OnInit, OnDestroy {
 
     // this.dateForm.reset();
   }
-
-
 
   onSwitchMode() {
     this.isLoginMode = !this.isLoginMode;

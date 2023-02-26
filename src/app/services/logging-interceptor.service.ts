@@ -1,3 +1,5 @@
+//acest serviciu este model..., nu este utilizat in program
+
 import {
   HttpHandler,
   HttpInterceptor,

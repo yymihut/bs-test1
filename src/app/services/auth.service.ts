@@ -1,35 +1,17 @@
-//nu folosesc fisierul auth.service ******
-
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { BehaviorSubject, catchError, Subject, tap, throwError } from 'rxjs';
+import { AngularFireAuth } from '@angular/fire/compat/auth';
 
-import firebase from 'firebase/compat/app';
-import * as firebaseui from 'firebaseui';
-import { initializeApp } from 'firebase/app';
-import { getAnalytics } from 'firebase/analytics';
+// install firebase -> ng add @angular/fire
 
-//import 'firebaseui/dist/firebaseui.css';
 import {
   getAuth,
-  onAuthStateChanged,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
 } from 'firebase/auth';
-import { User } from './user.model';
-
-const firebaseConfig = {
-  apiKey: 'AIzaSyBJ8fRQ7uJ05LRwHbUWF1e52_slV4thHyI',
-  authDomain: 'lgg6-361fc.firebaseapp.com',
-  databaseURL: 'https://lgg6-361fc.firebaseio.com',
-  projectId: 'lgg6-361fc',
-  storageBucket: 'lgg6-361fc.appspot.com',
-  messagingSenderId: '737254172140',
-  appId: '1:737254172140:web:ddae032ac5b7587bcf8cc9',
-  measurementId: 'G-0NH9DECZE5',
-};
-const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
+import { User } from '../auth/auth/user.model';
+import { Router } from '@angular/router';
 
 // export interface AuthResponseData {
 //   //Response Payload - documentatia firebase: https://firebase.google.com/docs/reference/rest/auth#section-create-email-password
@@ -47,60 +29,135 @@ export class AuthService {
   // user = new Subject<User>(); //primim datele noi de fiecare data cand ele se schimba
   user = new BehaviorSubject<User>(null); //ne da acces si la datele emise anterior
   token = null;
-  constructor(private http: HttpClient) {}
+  uid = null;
+  constructor(
+    private http: HttpClient,
+    private fireauth: AngularFireAuth,
+    private router: Router
+  ) {}
+
+  forgotPassword(email) {
+    this.fireauth.sendPasswordResetEmail(email).then(
+      (responseData) => {
+        console.log('la forgotPassword :', responseData);
+      },
+      (error) => {}
+    );
+  }
+
+  logOut() {
+    this.fireauth.signOut().then(
+      (responseData) => {
+        localStorage.removeItem('token');
+        this.router.navigate(['/']);
+        console.log('la logout :', responseData);
+      },
+      (error) => {}
+    );
+  }
 
   onSignUp(email, password) {
-    const auth = getAuth(app);
-    createUserWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        // Signed in
-        const user = userCredential.user;
-        console.log('la login in am primit :', user);
-        console.log('la login auth :', auth);
-        //this.ruta.navigate(['/mesaje']);
-        // ...
-      })
-      .catch((error) => {
-        const errorMessage = error.message;
-        // this.isLoading = false;
-        // this.errLogin = errorMessage;
-        // ..
-      });
+    this.fireauth.createUserWithEmailAndPassword(email, password).then(
+      (responseData) => {
+        console.log('la onSignUp :', responseData);
+        this.sendEmailForVerification(responseData.user);
+      },
+      (error) => {}
+    );
   }
+
+  sendEmailForVerification(user: any) {
+    user.sendEmailVerification().then(
+      (responseData) => {
+        console.log('la sendEmailForVerification :', responseData);
+        this.router.navigate(['/verify-email']);
+      },
+      (error) => {}
+    );
+  }
+  // onSignUp(email, password) {
+  //   const auth = getAuth();
+  //   createUserWithEmailAndPassword(auth, email, password)
+  //     .then((userCredential) => {
+  //       // Signed in
+  //       const user = userCredential.user;
+  //       console.log('la login in am primit :', user);
+  //       console.log('la login auth :', auth);
+  //       //this.ruta.navigate(['/mesaje']);
+  //       // ...
+  //     })
+  //     .catch((error) => {
+  //       const errorMessage = error.message;
+  //       // this.isLoading = false;
+  //       // this.errLogin = errorMessage;
+  //       // ..
+  //     });
+  // }
 
   onSignIn(email, password) {
-    const auth = getAuth(app);
-
-    signInWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        // Signed in
-        const user = userCredential.user;
-        //console.log('la sign in am primit :', user);
-        console.log(
-          'la sign userCredential.user :',
-          user.uid,
-          user.displayName,
-          user.email,
-          user
-        );
-        auth.currentUser.getIdToken().then((e) => {
-          this.token = e;
-          console.log('token analytics', this.token);
-          this.handleAuthentication(
-            this.token,
-            user.uid,
-            user.email,
-            user.displayName
+    this.fireauth.signInWithEmailAndPassword(email, password).then(
+      (responseData) => {
+        localStorage.setItem('token', 'true');
+        if (responseData.user?.emailVerified == true) {
+          console.log(
+            'la onSignIn, emailul este verificat :',
+            responseData.user.emailVerified,
+            responseData.user.getIdToken().then((e) => {
+              console.log('getIdToken:', e);
+              this.token = e;
+              this.uid = responseData.user.uid;
+              this.handleAuthentication(
+                this.token,
+                responseData.user.uid,
+                responseData.user.displayName,
+                responseData.user.email
+              );
+            })
           );
-        });
-        // ...
-      })
-      .catch((error) => {
-        const errorMessage = error.message;
-        // this.isLoading = false;
-        // this.errLogin = errorMessage;
-      });
+        } else {
+          console.log(
+            'la onSignIn,emailul este verificat :',
+            responseData.user.emailVerified
+          );
+        }
+      },
+      (error) => {}
+    );
   }
+
+  // onSignIn(email, password) {
+  //   //****** mai jos metoda veche */
+  //   const auth = getAuth();
+  //   signInWithEmailAndPassword(auth, email, password)
+  //     .then((userCredential) => {
+  //       // Signed in
+  //       const user = userCredential.user;
+  //       //console.log('la sign in am primit :', user);
+  //       console.log(
+  //         'la sign userCredential.user :',
+  //         user.uid,
+  //         user.displayName,
+  //         user.email,
+  //         user
+  //       );
+  //       auth.currentUser.getIdToken().then((e) => {
+  //         this.token = e;
+  //         console.log('token analytics', user.uid);
+  //         this.handleAuthentication(
+  //           this.token,
+  //           user.uid,
+  //           user.email,
+  //           user.displayName
+  //         );
+  //       });
+  //       // ...
+  //     })
+  //     .catch((error) => {
+  //       const errorMessage = error.message;
+  //       // this.isLoading = false;
+  //       // this.errLogin = errorMessage;
+  //     });
+  // }
   private handleAuthentication(
     token: string,
     uid: string,
@@ -110,7 +167,7 @@ export class AuthService {
     const user = new User(token, uid, email, displayName);
     this.user.next(user);
   }
-
+  //********** vechea metoda mai jos */
   // signUp(email: string, password: string) {
   //   return this.http
   //     .post<AuthResponseData>( //declaram pt tipescript ce fel de format de data o sa primim
