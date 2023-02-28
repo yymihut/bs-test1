@@ -1,170 +1,174 @@
-import { Injectable } from '@angular/core';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { Injectable, NgZone } from '@angular/core';
 import { BehaviorSubject, catchError, Subject, tap, throwError } from 'rxjs';
-import { AngularFireAuth } from '@angular/fire/compat/auth';
-
-// install firebase -> ng add @angular/fire
-
-import {
-  getAuth,
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-} from 'firebase/auth';
-import { User } from '../auth/auth/user.model';
+import { User } from './user.model';
 import { Router } from '@angular/router';
-
-// export interface AuthResponseData {
-//   //Response Payload - documentatia firebase: https://firebase.google.com/docs/reference/rest/auth#section-create-email-password
-//   idToken: string;
-//   email: string;
-//   refreshToken: string;
-//   expiresIn: string;
-//   localId: string;
-//   registered?: boolean;
-//   displayName: string;
-// }
+// install firebase -> ng add @angular/fire
+import * as auth from 'firebase/auth';
+import { AngularFireAuth } from '@angular/fire/compat/auth';
+import { Database, set, ref, update } from '@angular/fire/database';
 
 @Injectable({ providedIn: 'root' }) //{ providedIn: 'root' } - daca facem asta nu mai trebuie trecut serviciul in app.module.ts
 export class AuthService {
   // user = new Subject<User>(); //primim datele noi de fiecare data cand ele se schimba
   user = new BehaviorSubject<User>(null); //ne da acces si la datele emise anterior
-  token = null;
-  uid = null;
+  userData: any; // Save logged in user data
+
   constructor(
-    private http: HttpClient,
-    private fireauth: AngularFireAuth,
-    private router: Router
-  ) {}
+    //public angularFirestore: AngularFirestore, // Inject Firestore service
+    public afAuth: AngularFireAuth, // Inject Firebase auth service
+    public router: Router,
+    public ngZone: NgZone, // NgZone service to remove outside scope warning
 
-  forgotPassword(email) {
-    this.fireauth.sendPasswordResetEmail(email).then(
-      (responseData) => {
-        console.log('la forgotPassword :', responseData);
-      },
-      (error) => {}
-    );
-  }
-
-  logOut() {
-    this.fireauth.signOut().then(
-      (responseData) => {
-        localStorage.removeItem('token');
-        this.router.navigate(['/']);
-        console.log('la logout :', responseData);
-      },
-      (error) => {}
-    );
-  }
-
-  onSignUp(email, password) {
-    this.fireauth.createUserWithEmailAndPassword(email, password).then(
-      (responseData) => {
-        console.log('la onSignUp :', responseData);
-        this.sendEmailForVerification(responseData.user);
-      },
-      (error) => {}
-    );
-  }
-
-  sendEmailForVerification(user: any) {
-    user.sendEmailVerification().then(
-      (responseData) => {
-        console.log('la sendEmailForVerification :', responseData);
-        this.router.navigate(['/verify-email']);
-      },
-      (error) => {}
-    );
-  }
-  // onSignUp(email, password) {
-  //   const auth = getAuth();
-  //   createUserWithEmailAndPassword(auth, email, password)
-  //     .then((userCredential) => {
-  //       // Signed in
-  //       const user = userCredential.user;
-  //       console.log('la login in am primit :', user);
-  //       console.log('la login auth :', auth);
-  //       //this.ruta.navigate(['/mesaje']);
-  //       // ...
-  //     })
-  //     .catch((error) => {
-  //       const errorMessage = error.message;
-  //       // this.isLoading = false;
-  //       // this.errLogin = errorMessage;
-  //       // ..
-  //     });
-  // }
-
-  onSignIn(email, password) {
-    this.fireauth.signInWithEmailAndPassword(email, password).then(
-      (responseData) => {
-        localStorage.setItem('token', 'true');
-        if (responseData.user?.emailVerified == true) {
-          console.log(
-            'la onSignIn, emailul este verificat :',
-            responseData.user.emailVerified,
-            responseData.user.getIdToken().then((e) => {
-              console.log('getIdToken:', e);
-              this.token = e;
-              this.uid = responseData.user.uid;
-              this.handleAuthentication(
-                this.token,
-                responseData.user.uid,
-                responseData.user.displayName,
-                responseData.user.email
-              );
-            })
-          );
-        } else {
-          console.log(
-            'la onSignIn,emailul este verificat :',
-            responseData.user.emailVerified
-          );
-        }
-      },
-      (error) => {}
-    );
-  }
-
-  // onSignIn(email, password) {
-  //   //****** mai jos metoda veche */
-  //   const auth = getAuth();
-  //   signInWithEmailAndPassword(auth, email, password)
-  //     .then((userCredential) => {
-  //       // Signed in
-  //       const user = userCredential.user;
-  //       //console.log('la sign in am primit :', user);
-  //       console.log(
-  //         'la sign userCredential.user :',
-  //         user.uid,
-  //         user.displayName,
-  //         user.email,
-  //         user
-  //       );
-  //       auth.currentUser.getIdToken().then((e) => {
-  //         this.token = e;
-  //         console.log('token analytics', user.uid);
-  //         this.handleAuthentication(
-  //           this.token,
-  //           user.uid,
-  //           user.email,
-  //           user.displayName
-  //         );
-  //       });
-  //       // ...
-  //     })
-  //     .catch((error) => {
-  //       const errorMessage = error.message;
-  //       // this.isLoading = false;
-  //       // this.errLogin = errorMessage;
-  //     });
-  // }
-  private handleAuthentication(
-    token: string,
-    uid: string,
-    displayName: string,
-    email: string
+    public database: Database
   ) {
-    const user = new User(token, uid, email, displayName);
+    /* Saving user data in localstorage when
+    logged in and setting up null when logged out */
+    this.afAuth.authState.subscribe((user) => {
+      if (user) {
+        this.userData = user;
+        localStorage.setItem('user', JSON.stringify(this.userData));
+        JSON.parse(localStorage.getItem('user')!);
+      } else {
+        localStorage.setItem('user', 'null');
+        JSON.parse(localStorage.getItem('user')!);
+      }
+    });
+  }
+
+  // Reset Forggot password
+  ForgotPassword(passwordResetEmail: string) {
+    return this.afAuth
+      .sendPasswordResetEmail(passwordResetEmail)
+      .then(() => {
+        window.alert('Password reset email sent, check your inbox.');
+      })
+      .catch((error) => {
+        window.alert(error);
+      });
+  }
+
+  // Returns true when user is looged in and email is verified
+  get isLoggedIn(): boolean {
+    const user = JSON.parse(localStorage.getItem('user')!);
+    return user !== null && user.emailVerified !== false ? true : false;
+  }
+
+  // Sign in with Google
+  GoogleAuth() {
+    return this.AuthLogin(new auth.GoogleAuthProvider()).then((res: any) => {
+      this.router.navigate(['dashboard']);
+    });
+  }
+
+  // Auth logic to run auth providers
+  AuthLogin(provider: any) {
+    return this.afAuth
+      .signInWithPopup(provider)
+      .then((result) => {
+        this.router.navigate(['dashboard']);
+
+        this.SetUserData(result.user);
+      })
+      .catch((error) => {
+        window.alert(error);
+      });
+  }
+
+  // Sign out
+  logOut() {
+    return this.afAuth.signOut().then(() => {
+      localStorage.removeItem('user');
+      this.router.navigate(['/']);
+    });
+  }
+
+  // Sign up with email/password
+  onSignUp(email: string, password: string) {
+    return this.afAuth
+      .createUserWithEmailAndPassword(email, password)
+      .then((result) => {
+        /* Call the SendVerificaitonMail() function when new user sign
+        up and returns promise */
+        this.SendVerificationMail();
+        this.SetUserData(result.user);
+        localStorage.setItem('user', 'null');
+        JSON.parse(localStorage.getItem('user')!);
+      })
+      .catch((error) => {
+        window.alert(error.message);
+      });
+  }
+
+  // Send email verfificaiton when new user sign up
+  SendVerificationMail() {
+    return this.afAuth.currentUser
+      .then((u: any) => u.sendEmailVerification())
+      .then(() => {
+        this.router.navigate(['verify-email-address']);
+      });
+  }
+
+  // Sign in with email/password
+  onSignIn(email: string, password: string) {
+    return this.afAuth
+      .signInWithEmailAndPassword(email, password)
+      .then((result) => {
+        if (result.user.emailVerified) {
+          this.isLogged(result.user)
+          this.handleAuthentication(
+            result.user.uid,
+            result.user.email,
+            result.user.displayName,
+            result.user.photoURL,
+            result.user.emailVerified
+          );
+          this.afAuth.authState.subscribe((user) => {
+            if (user) {
+              this.router.navigate(['/']);
+            }
+          });
+        } else {
+          this.router.navigate(['verify-email-address']);
+        }
+      })
+      .catch((error) => {
+        window.alert(error.message);
+      });
+  }
+
+  isLogged(user) {
+    localStorage.setItem('user', JSON.stringify(user));
+    JSON.parse(localStorage.getItem('user')!);
+  }
+
+  /* Setting up user data when sign in with username/password,
+  sign up with username/password and sign in with social auth
+  provider in Firestore database using AngularFirestore + AngularFirestoreDocument service */
+  SetUserData(user: any) {
+    const userData = {
+      uid: user.uid,
+      email: user.email,
+      displayName: user.displayName,
+      photoURL: user.photoURL,
+      emailVerified: user.emailVerified,
+    };
+    this.isLogged(userData);
+
+    console.log('SetUserData, userData', userData);
+    console.log('SetUserData, localstorage',JSON.parse(localStorage.getItem('user')!));
+    return set(ref(this.database, 'users/' + user.uid), {
+      userData,
+    });
+  }
+
+  private handleAuthentication(
+    uid: string,
+    email: string,
+    displayName: string,
+    photoURL: string,
+    emailVerified: boolean
+  ) {
+    const user = new User(uid, email, displayName, photoURL, emailVerified);
     this.user.next(user);
   }
   //********** vechea metoda mai jos */

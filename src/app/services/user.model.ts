@@ -1,14 +1,11 @@
 export class User {
   constructor(
-    private _token: string,
     private _uid: string,
     public email: string,
-    public displayName: string
+    public displayName: string,
+    public photoURL: string,
+    public emailVerified: boolean
   ) {}
-
-  get token() {
-    return this._token;
-  }
 
   get uid() {
     return this._uid;

@@ -25,14 +25,23 @@ import { MesajeComponent } from './mesaje/mesaje.component';
 import { AuthInterceptorService } from './services/auth-interceptor.service';
 import { LoggingInterceptorService } from './services/logging-interceptor.service';
 import { AuthComponent } from './auth/auth/auth.component';
+
 import { AngularFireModule } from '@angular/fire/compat';
-import { environment } from 'src/environments/environment';
+import { AngularFireAuthModule } from '@angular/fire/compat/auth';
+import { AngularFireStorageModule } from '@angular/fire/compat/storage';
+import { AngularFirestoreModule } from '@angular/fire/compat/firestore';
+import { AngularFireDatabaseModule } from '@angular/fire/compat/database';
+import { environment } from '../environments/environment';
+import { VerifyemailComponent } from './components/verifyemail/verifyemail.component';
+import {provideDatabase, getDatabase} from '@angular/fire/database'
+import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
 
 const routingulAplicatiei: Routes = [
   { path: '', component: HomeComponent },
   { path: 'projects', component: ProjectsComponent },
   { path: 'hireme', component: HireMeComponent },
   { path: 'mesaje', component: MesajeComponent },
+  { path: 'verify-email-address', component: VerifyemailComponent },
   { path: 'cv', component: CVComponent },
   { path: 'not-found', component: NotfoundPageComponent },
   { path: 'auth', component: AuthComponent },
@@ -55,6 +64,7 @@ const routingulAplicatiei: Routes = [
     FilterPipe,
     MesajeComponent,
     AuthComponent,
+    VerifyemailComponent,
   ],
   providers: [
     ImageService,
@@ -85,7 +95,13 @@ const routingulAplicatiei: Routes = [
     SharedModule,
     BrowserAnimationsModule,
     HttpClientModule,
+    provideFirebaseApp(()=> initializeApp(environment.firebase)),
+    provideDatabase(()=>getDatabase()),
     AngularFireModule.initializeApp(environment.firebase),
+    AngularFireAuthModule,
+    AngularFirestoreModule,
+    AngularFireStorageModule,
+    AngularFireDatabaseModule,
   ],
 })
 export class AppModule {}
