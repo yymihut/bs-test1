@@ -13,6 +13,8 @@ export class AuthService {
   user = new BehaviorSubject<User>(null); //ne da acces si la datele emise anterior
   userData: any; // Save logged in user data
 
+  popup = new Subject<any>();
+
   constructor(
     //public angularFirestore: AngularFirestore, // Inject Firestore service
     public afAuth: AngularFireAuth, // Inject Firebase auth service
@@ -43,7 +45,7 @@ export class AuthService {
         window.alert('Password reset email sent, check your inbox.');
       })
       .catch((error) => {
-        window.alert(error);
+        this.sendPopup(true, error.message);
       });
   }
 
@@ -70,16 +72,8 @@ export class AuthService {
         this.SetUserData(result.user);
       })
       .catch((error) => {
-        window.alert(error);
+        this.sendPopup(true, error.message);
       });
-  }
-
-  // Sign out
-  logOut() {
-    return this.afAuth.signOut().then(() => {
-      localStorage.removeItem('user');
-      this.router.navigate(['/']);
-    });
   }
 
   // Sign up with email/password
@@ -95,7 +89,7 @@ export class AuthService {
         JSON.parse(localStorage.getItem('user')!);
       })
       .catch((error) => {
-        window.alert(error.message);
+        this.sendPopup(true, error.message);
       });
   }
 
@@ -109,12 +103,12 @@ export class AuthService {
   }
 
   // Sign in with email/password
-  onSignIn(email: string, password: string) {
+  logIn(email: string, password: string) {
     return this.afAuth
       .signInWithEmailAndPassword(email, password)
       .then((result) => {
         if (result.user.emailVerified) {
-          this.isLogged(result.user)
+          this.isLogged(result.user);
           this.handleAuthentication(
             result.user.uid,
             result.user.email,
@@ -124,21 +118,36 @@ export class AuthService {
           );
           this.afAuth.authState.subscribe((user) => {
             if (user) {
+              console.log('la auth get isslogedin:*****:', result.user.emailVerified);
               this.router.navigate(['/']);
             }
           });
         } else {
-          this.router.navigate(['verify-email-address']);
+          //console.log('la auth get isslogedin:*****:', this.isLoggedIn);
+           this.router.navigate(['verify-email-address']);
         }
       })
       .catch((error) => {
-        window.alert(error.message);
+        this.sendPopup(true, error);
+        //window.alert(error.message);
       });
+  }
+
+  sendPopup(show, message) {
+    return this.popup.next({show, message})
   }
 
   isLogged(user) {
     localStorage.setItem('user', JSON.stringify(user));
     JSON.parse(localStorage.getItem('user')!);
+  }
+
+  // Sign out
+  logOut() {
+    return this.afAuth.signOut().then(() => {
+      localStorage.removeItem('user');
+      this.router.navigate(['/']);
+    });
   }
 
   /* Setting up user data when sign in with username/password,
@@ -154,8 +163,11 @@ export class AuthService {
     };
     this.isLogged(userData);
 
-    console.log('SetUserData, userData', userData);
-    console.log('SetUserData, localstorage',JSON.parse(localStorage.getItem('user')!));
+    // console.log('SetUserData, userData', userData);
+    // console.log(
+    //   'SetUserData, localstorage',
+    //   JSON.parse(localStorage.getItem('user')!)
+    // );
     return set(ref(this.database, 'users/' + user.uid), {
       userData,
     });

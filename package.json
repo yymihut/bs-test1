@@ -28,6 +28,7 @@
     "gsap": "^3.11.4",
     "jquery": "^3.6.3",
     "ngx-bootstrap": "^10.2.0",
+    "ngx-rerender": "^1.1.0",
     "popper.js": "^1.16.1",
     "primeicons": "^6.0.1",
     "primeng": "^15.2.0",

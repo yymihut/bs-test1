@@ -1,6 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { PostService } from '../services/http.service';
+import { PostService } from '../services/postService.service';
 import { Subscription } from 'rxjs';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-mesaje',
@@ -13,29 +14,42 @@ export class MesajeComponent implements OnInit, OnDestroy {
   isFetching = false; // este pt load indicator, spiner
   error = null;
 
-  constructor(private postservice: PostService) {
+  constructor(private postservice: PostService , private authService: AuthService,) {
     this.isFetching = true; // este pt load indicator, spiner
-    this.postservice.fetchPosts();
-    this.subscription = this.postservice.eroarea.subscribe((err) => {
-      //console.log(err.message);
-      this.error = err;
-    });
+
+   this.subscription = this.postservice.eroarea.subscribe((err) => {
+      console.log(err.message);
+     this.error = err;
+   });
   }
 
-  ngOnInit() {
+  async ngOnInit() {
     //load posts cand se deschide pagina mesaje
-    this.onFetchPosts();
+    //console.log('la post mesaje  this.authService.userData.uid ', this.authService.userData.uid);
+    await this.onFetchPosts();
   }
 
-  onFetchPosts() {
+ async onFetchPosts() {
     //send Http request
-    this.subscription = this.postservice.fetchedPosts.subscribe({
+
+    await this.postservice.fetchPosts();
+    if(this.loadedPosts){
+      this.subscription = this.postservice.fetchedPosts.subscribe({
       next: (posts) => {
-        this.loadedPosts = posts;
+        for (const key in posts.mesages) {
+          if (posts.mesages.hasOwnProperty(key)) {
+            let array = Object.entries(posts.mesages[key]);
+            const entries = new Map(array);
+            const obj = Object.fromEntries(entries);
+            this.loadedPosts.push(obj);
+          }
+        }
+        console.log('neededArray', this.loadedPosts);
         this.isFetching = false;
-        //console.log('mesaje:', this.loadedPosts);
       },
     });
+    }
+
   }
 
   onDelete(id) {
@@ -48,6 +62,7 @@ export class MesajeComponent implements OnInit, OnDestroy {
       1
     );
   }
+
   inchideEroarea() {
     this.error = null;
     this.isFetching = false;

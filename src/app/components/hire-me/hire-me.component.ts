@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
 import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Post } from 'src/app/services/post.model';
-import { PostService } from 'src/app/services/http.service';
+import { PostService } from 'src/app/services/postService.service';
 import { ConfirmationModalComponent } from 'src/app/shared/confirmation-modal/confirmation-modal.component';
 import { Subscription } from 'rxjs';
 

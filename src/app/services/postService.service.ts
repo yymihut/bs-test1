@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Output } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Subject } from 'rxjs';
 import { AuthService } from './auth.service';
@@ -10,8 +10,14 @@ import {
   update,
   push,
   child,
+  get,
+  getDatabase,
 } from '@angular/fire/database';
 import { Router } from '@angular/router';
+import {
+  AngularFireDatabase,
+  AngularFireList,
+} from '@angular/fire/compat/database';
 
 @Injectable({ providedIn: 'root' }) //{ providedIn: 'root' } - daca facem asta nu mai trebuie trecut serviciul in app.module.ts
 export class PostService {
@@ -27,7 +33,7 @@ export class PostService {
   ) {}
 
   createPost(nume, amount, subiect, email, sex, data, hobbyes) {
-    //send Http request - folosit in  hire-me component
+    //send request - folosit in  hire-me component
     if (this.authService.isLoggedIn) {
       console.log('this.authService.isLoggedIn ', this.authService.isLoggedIn);
       console.log('this.isLoggedIn()', this.authService.isLoggedIn);
@@ -63,15 +69,34 @@ export class PostService {
         }
       );
     } else {
-      console.log(
-        'this.authService.isLoggedIn dupa else:',
-        this.authService.isLoggedIn
-      );
+      // console.log(
+      //   'this.authService.isLoggedIn dupa else:',
+      //   this.authService.isLoggedIn
+      // );
       this.ruta.navigate(['auth']);
     }
   }
 
-  fetchPosts() {}
+  fetchPosts() {
+    const db = getDatabase();
+    console.log(db);
+
+    const dbRef = ref(getDatabase());
+    console.log('la authService  this.authService.userData.uid ', this.authService.userData.uid);
+    get(child(dbRef, `users/${this.authService.userData.uid}`))
+      .then((snapshot) => {
+        if (snapshot.exists()) {
+           this.fetchedPosts.next(snapshot.val())
+          //console.log(snapshot.val());
+        } else {
+          console.log('No data available');
+        }
+      })
+      .catch((error) => {
+        console.log('la authService  this.authService.userData.uid ', this.authService.userData.uid);
+        console.error(error);
+      });
+  }
 
   deletePost(id) {
     //send Http request- folosit in  mesaje component
@@ -81,3 +106,4 @@ export class PostService {
     ); //ca sa fim informati in component despre stergere
   }
 }
+

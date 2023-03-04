@@ -20,7 +20,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
       this.esteLogat = !user ? false : true;
     });
     console.log('nav bar', this.authService.isLoggedIn )
-    console.log('nav bar local storage',localStorage.getItem('user'))
+   // console.log('nav bar local storage',localStorage.getItem('user'))
     this.esteLogat = this.authService.isLoggedIn
     //Called after the constructor, initializing input properties, and the first call to ngOnChanges.
     //Add 'implements OnInit' to the class.

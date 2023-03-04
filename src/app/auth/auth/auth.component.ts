@@ -1,7 +1,8 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, Subscription } from 'rxjs';
+import { PostService } from 'src/app/services/postService.service';
 import { AuthService } from '../../services/auth.service';
 
 @Component({
@@ -10,18 +11,29 @@ import { AuthService } from '../../services/auth.service';
   styleUrls: ['./auth.component.css'],
 })
 export class AuthComponent implements OnInit, OnDestroy {
+  // @Input() showPopup: boolean = false;
   isLoading = false;
   isLoginMode = true;
   dateForm!: FormGroup;
   errLogin = null;
+  subscription : Subscription
 
-  constructor(private ruta: Router, private authService: AuthService) {}
+  show = false;
+  message = '';
+
+  constructor(
+    private ruta: Router,
+    public authService: AuthService,
+    public postService: PostService
+  ) {}
 
   ngOnInit(): void {
     this.dateForm = new FormGroup({
       email: new FormControl(null, [Validators.required, Validators.email]),
       password: new FormControl(null, Validators.required),
+
     });
+    //console.log('this.subscription la auth NEXT',);
     // valuechanges and status - aflam date despre form in timp real
     // this.dateForm.valueChanges.subscribe((value) => console.log(value));
     // this.dateForm.statusChanges.subscribe((status) => console.log(status));
@@ -32,6 +44,12 @@ export class AuthComponent implements OnInit, OnDestroy {
     if (!this.dateForm.valid) {
       return;
     }
+    this.subscription = this.authService.popup.subscribe(e=>{
+      this.message = e.message;
+      this.show = e.show;
+      console.log('this.authService.message555555qqqqqqq',e)
+    })
+
     const email = this.dateForm.get('email').value;
     const password = this.dateForm.get('password').value;
 
@@ -41,41 +59,9 @@ export class AuthComponent implements OnInit, OnDestroy {
       this.isLoginMode = true;
     } else {
       this.isLoading = false;
-      this.authService.onSignIn(email, password);
+      this.authService.logIn(email, password);
     }
-
     this.dateForm.reset();
-    //console.log(this.dateForm);  *********varianta 2***********
-    // let authObs: Observable<AuthResponseData>;
-
-    // if (!this.dateForm.valid) {
-    //   return;
-    // }
-
-    // const email = this.dateForm.get('email').value;
-    // const password = this.dateForm.get('password').value;
-
-    // this.isLoading = true;
-    // if (this.isLoginMode) {
-    //   authObs = this.authService.logIn(email, password);
-    // } else {
-    //   authObs = this.authService.signUp(email, password);
-    // }
-
-    // authObs.subscribe({
-    //   next: (responseData) => {
-    //     //console.log('responseData',responseData);
-    //     this.isLoading = false;
-    //     this.ruta.navigate(['/mesaje']);
-    //   },
-    //   error: (err) => {
-    //     //console.log('responseData error',err);
-    //     this.isLoading = false;
-    //     this.errLogin = err;
-    //   },
-    // });
-
-    // this.dateForm.reset();
   }
 
   onSwitchMode() {
@@ -88,8 +74,43 @@ export class AuthComponent implements OnInit, OnDestroy {
     this.ruta.navigate(['/']);
   }
 
+
+
   ngOnDestroy() {
+    //this.postService.showPopup = false;
     // unsubscribe to ensure no memory leaks
     //this.subscription.unsubscribe();
   }
 }
+
+//console.log(this.dateForm);  *********varianta 2 - cu observable***********
+// let authObs: Observable<AuthResponseData>;
+
+// if (!this.dateForm.valid) {
+//   return;
+// }
+
+// const email = this.dateForm.get('email').value;
+// const password = this.dateForm.get('password').value;
+
+// this.isLoading = true;
+// if (this.isLoginMode) {
+//   authObs = this.authService.logIn(email, password);
+// } else {
+//   authObs = this.authService.signUp(email, password);
+// }
+
+// authObs.subscribe({
+//   next: (responseData) => {
+//     //console.log('responseData',responseData);
+//     this.isLoading = false;
+//     this.ruta.navigate(['/mesaje']);
+//   },
+//   error: (err) => {
+//     //console.log('responseData error',err);
+//     this.isLoading = false;
+//     this.errLogin = err;
+//   },
+// });
+
+// this.dateForm.reset();

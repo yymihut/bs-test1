@@ -33,12 +33,10 @@
             <button class="btn btn-primary" type="submit" style="margin-left: 10px;" [disabled]="!dateForm.valid">
               {{isLoginMode? 'Login' : 'Sign Up'}}
             </button>
-
             <button class="btn btn-danger " type="button" style="margin-left: 10px;" (click)="onCancel()">
               Cancel
             </button>
           </div>
-
           <!-- <div class="alert alert-danger" *ngIf="error">
                 <h1>A aparut o eroare</h1>
                 <p>{{error.message}}</p>
@@ -51,5 +49,6 @@
       </form>
     </div>
   </section>
+  <app-popup-alert *ngIf="show"
+    [mesaj]="message"></app-popup-alert>
 </main>
-
