@@ -54,7 +54,7 @@ export class HireMeComponent implements OnInit, OnDestroy {
       data: new FormControl(null, Validators.required),
       hobbyes: new FormArray([]),
     });
-    this.subscription = this.postService.eroarea.subscribe((err) => {
+    this.subscription = this.postService.message.subscribe((err) => {
       console.log(err.message);
       this.error = err;
     });

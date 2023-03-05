@@ -1,4 +1,4 @@
-import { Injectable, Output } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Subject } from 'rxjs';
 import { AuthService } from './auth.service';
@@ -11,34 +11,32 @@ import {
   push,
   child,
   get,
+  remove,
   getDatabase,
 } from '@angular/fire/database';
 import { Router } from '@angular/router';
-import {
-  AngularFireDatabase,
-  AngularFireList,
-} from '@angular/fire/compat/database';
 
 @Injectable({ providedIn: 'root' }) //{ providedIn: 'root' } - daca facem asta nu mai trebuie trecut serviciul in app.module.ts
 export class PostService {
   fetchedPosts = new Subject<any>();
-  eroarea = new Subject<any>();
+  message = new Subject<any>();
   isLogedIn = null;
+  uid: string = '';
 
   constructor(
-    private http: HttpClient,
     private authService: AuthService,
     public database: Database,
     private ruta: Router
   ) {}
 
   createPost(nume, amount, subiect, email, sex, data, hobbyes) {
+    this.uid = JSON.parse(localStorage.getItem('user')!).uid;
     //send request - folosit in  hire-me component
     if (this.authService.isLoggedIn) {
-      console.log('this.authService.isLoggedIn ', this.authService.isLoggedIn);
-      console.log('this.isLoggedIn()', this.authService.isLoggedIn);
+      //console.log('this.authService.isLoggedIn ', this.authService.isLoggedIn);
       const id = new Date().valueOf();
-      const postData = {
+      //console.log('this.authService.userData.uid:', this.uid);
+      set(ref(this.database, `users/${this.uid}/mesages/${id}`), {
         nume: nume,
         amount: amount,
         subiect: subiect,
@@ -47,63 +45,38 @@ export class PostService {
         data: data,
         hobbyes: hobbyes,
         id: id,
-      };
-      console.log(
-        'this.authService.userData.uid:',
-        this.authService.userData.uid
-      );
-      set(
-        ref(
-          this.database,
-          `users/${this.authService.userData.uid}/mesages/${id}`
-        ),
-        {
-          nume: nume,
-          amount: amount,
-          subiect: subiect,
-          email: email,
-          sex: sex,
-          data: data,
-          hobbyes: hobbyes,
-          id: id,
-        }
-      );
+      });
     } else {
-      // console.log(
-      //   'this.authService.isLoggedIn dupa else:',
-      //   this.authService.isLoggedIn
-      // );
       this.ruta.navigate(['auth']);
     }
   }
 
   fetchPosts() {
-    const db = getDatabase();
-    console.log(db);
-
+    this.uid = JSON.parse(localStorage.getItem('user')!).uid;
     const dbRef = ref(getDatabase());
-    console.log('la authService  this.authService.userData.uid ', this.authService.userData.uid);
-    get(child(dbRef, `users/${this.authService.userData.uid}`))
+
+    return get(child(dbRef, `users/${this.uid}`))
       .then((snapshot) => {
         if (snapshot.exists()) {
-           this.fetchedPosts.next(snapshot.val())
-          //console.log(snapshot.val());
+          this.fetchedPosts.next(snapshot.val());
         } else {
-          console.log('No data available');
+          this.message.next('Nu exista date de afisat !');
         }
       })
       .catch((error) => {
-        console.log('la authService  this.authService.userData.uid ', this.authService.userData.uid);
         console.error(error);
       });
   }
 
   deletePost(id) {
-    //send Http request- folosit in  mesaje component
-    console.log('deletePost(id)', id);
-    return this.http.delete(
-      `https://lgg6-361fc.firebaseio.com/posts/${id}.json`
-    ); //ca sa fim informati in component despre stergere
+    this.uid = JSON.parse(localStorage.getItem('user')!).uid;
+    const dbRef = ref(getDatabase());
+    remove(child(dbRef, `users/${this.uid}/mesages/${id}`))
+      .then((result) => {
+        console.log('deletePost(id)', result);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
   }
 }
-

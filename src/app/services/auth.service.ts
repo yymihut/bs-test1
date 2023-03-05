@@ -12,29 +12,32 @@ export class AuthService {
   // user = new Subject<User>(); //primim datele noi de fiecare data cand ele se schimba
   user = new BehaviorSubject<User>(null); //ne da acces si la datele emise anterior
   userData: any; // Save logged in user data
-
   popup = new Subject<any>();
+  private timer: any;
 
   constructor(
     //public angularFirestore: AngularFirestore, // Inject Firestore service
     public afAuth: AngularFireAuth, // Inject Firebase auth service
     public router: Router,
-    public ngZone: NgZone, // NgZone service to remove outside scope warning
 
     public database: Database
   ) {
     /* Saving user data in localstorage when
     logged in and setting up null when logged out */
-    this.afAuth.authState.subscribe((user) => {
-      if (user) {
-        this.userData = user;
-        localStorage.setItem('user', JSON.stringify(this.userData));
-        JSON.parse(localStorage.getItem('user')!);
-      } else {
-        localStorage.setItem('user', 'null');
-        JSON.parse(localStorage.getItem('user')!);
-      }
-    });
+    // this.afAuth.authState.subscribe((user) => {
+    //   if (user) {
+    //     this.userData = user;
+    //     localStorage.setItem('user', JSON.stringify(this.userData));
+    //    // JSON.parse(localStorage.getItem('user')!);
+    //     // console.log(
+    //     //   'la auth.service',
+    //     //   JSON.parse(localStorage.getItem('user')!).uid
+    //     // );
+    //   } else {
+    //     localStorage.setItem('user', 'null');
+    //     JSON.parse(localStorage.getItem('user')!);
+    //   }
+    // });
   }
 
   // Reset Forggot password
@@ -45,7 +48,7 @@ export class AuthService {
         window.alert('Password reset email sent, check your inbox.');
       })
       .catch((error) => {
-        this.sendPopup(true, error.message);
+        this.sendPopup(true, error.message, null);
       });
   }
 
@@ -58,7 +61,7 @@ export class AuthService {
   // Sign in with Google
   GoogleAuth() {
     return this.AuthLogin(new auth.GoogleAuthProvider()).then((res: any) => {
-      this.router.navigate(['dashboard']);
+      this.router.navigate(['/']);
     });
   }
 
@@ -69,10 +72,10 @@ export class AuthService {
       .then((result) => {
         this.router.navigate(['dashboard']);
 
-        this.SetUserData(result.user);
+        // this.SetUserData(result.user);
       })
       .catch((error) => {
-        this.sendPopup(true, error.message);
+        this.sendPopup(true, error.message, null);
       });
   }
 
@@ -84,12 +87,11 @@ export class AuthService {
         /* Call the SendVerificaitonMail() function when new user sign
         up and returns promise */
         this.SendVerificationMail();
-        this.SetUserData(result.user);
+        set(ref(this.database, 'users/' + result.user.uid), { result });
         localStorage.setItem('user', 'null');
-        JSON.parse(localStorage.getItem('user')!);
       })
       .catch((error) => {
-        this.sendPopup(true, error.message);
+        this.sendPopup(true, error.message, null);
       });
   }
 
@@ -98,7 +100,7 @@ export class AuthService {
     return this.afAuth.currentUser
       .then((u: any) => u.sendEmailVerification())
       .then(() => {
-        this.router.navigate(['verify-email-address']);
+        this.sendPopup(true, 'Email trimis !', null);
       });
   }
 
@@ -107,6 +109,7 @@ export class AuthService {
     return this.afAuth
       .signInWithEmailAndPassword(email, password)
       .then((result) => {
+        console.log('la auth logIn(:', result.user.emailVerified);
         if (result.user.emailVerified) {
           this.isLogged(result.user);
           this.handleAuthentication(
@@ -116,25 +119,23 @@ export class AuthService {
             result.user.photoURL,
             result.user.emailVerified
           );
-          this.afAuth.authState.subscribe((user) => {
-            if (user) {
-              console.log('la auth get isslogedin:*****:', result.user.emailVerified);
-              this.router.navigate(['/']);
-            }
-          });
+          this.autoLogout();
+          this.router.navigate(['/']);
         } else {
-          //console.log('la auth get isslogedin:*****:', this.isLoggedIn);
-           this.router.navigate(['verify-email-address']);
+          this.sendPopup(
+            true,
+            `Email neverificat, apasati pe linkul trimis la adresa ${result.user.email}`,
+            'Retrimite mail'
+          );
         }
       })
       .catch((error) => {
-        this.sendPopup(true, error);
-        //window.alert(error.message);
+        this.sendPopup(true, error, null);
       });
   }
 
-  sendPopup(show, message) {
-    return this.popup.next({show, message})
+  sendPopup(show, message1, message2) {
+    return this.popup.next({ show, message1, message2 });
   }
 
   isLogged(user) {
@@ -147,31 +148,51 @@ export class AuthService {
     return this.afAuth.signOut().then(() => {
       localStorage.removeItem('user');
       this.router.navigate(['/']);
+      if (this.timer) {
+        clearTimeout(this.timer);
+      }
     });
+  }
+
+  //auto  login - daca avem user logat in local storage
+  autoLogin() {
+    const user = JSON.parse(localStorage.getItem('user'));
+    //console.log('la auth autoLogin() {', user);
+    if (user) {
+      return;
+    }
+    const loadedUser = new User(
+      user.uid,
+      user.email,
+      user.displayName,
+      user.photoURL,
+      user.emailVerified
+    );
+    this.user.next(loadedUser);
+    this.autoLogout();
+  }
+
+  autoLogout() {
+    this.timer = setTimeout(() => {
+      this.logOut();
+    }, 4000);
+    this.isLoggedIn;
   }
 
   /* Setting up user data when sign in with username/password,
   sign up with username/password and sign in with social auth
   provider in Firestore database using AngularFirestore + AngularFirestoreDocument service */
-  SetUserData(user: any) {
-    const userData = {
-      uid: user.uid,
-      email: user.email,
-      displayName: user.displayName,
-      photoURL: user.photoURL,
-      emailVerified: user.emailVerified,
-    };
-    this.isLogged(userData);
-
-    // console.log('SetUserData, userData', userData);
-    // console.log(
-    //   'SetUserData, localstorage',
-    //   JSON.parse(localStorage.getItem('user')!)
-    // );
-    return set(ref(this.database, 'users/' + user.uid), {
-      userData,
-    });
-  }
+  // SetUserData(user: any) {
+  //   const userData = {
+  //     uid: user.uid,
+  //     email: user.email,
+  //     displayName: user.displayName,
+  //     photoURL: user.photoURL,
+  //     emailVerified: user.emailVerified,
+  //   };
+  //   this.user.next(userData);
+  //   this.isLogged(userData);
+  // }
 
   private handleAuthentication(
     uid: string,
@@ -182,7 +203,13 @@ export class AuthService {
   ) {
     const user = new User(uid, email, displayName, photoURL, emailVerified);
     this.user.next(user);
+    //console.log('la auth private handleAuthentication(', this.user);
+    //localStorage.setItem('user', JSON.stringify(this.user));
+    localStorage.setItem('user', JSON.stringify(user));
+    //const userv = JSON.parse(localStorage.getItem('user'));
+    //console.log('la auth local storage:', userv);
   }
+
   //********** vechea metoda mai jos */
   // signUp(email: string, password: string) {
   //   return this.http

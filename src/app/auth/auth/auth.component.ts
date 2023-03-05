@@ -16,10 +16,11 @@ export class AuthComponent implements OnInit, OnDestroy {
   isLoginMode = true;
   dateForm!: FormGroup;
   errLogin = null;
-  subscription : Subscription
+  subscription: Subscription;
 
   show = false;
-  message = '';
+  message1 = '';
+  message2 = '';
 
   constructor(
     private ruta: Router,
@@ -31,12 +32,8 @@ export class AuthComponent implements OnInit, OnDestroy {
     this.dateForm = new FormGroup({
       email: new FormControl(null, [Validators.required, Validators.email]),
       password: new FormControl(null, Validators.required),
-
     });
     //console.log('this.subscription la auth NEXT',);
-    // valuechanges and status - aflam date despre form in timp real
-    // this.dateForm.valueChanges.subscribe((value) => console.log(value));
-    // this.dateForm.statusChanges.subscribe((status) => console.log(status));
   }
 
   onSubmit() {
@@ -44,11 +41,12 @@ export class AuthComponent implements OnInit, OnDestroy {
     if (!this.dateForm.valid) {
       return;
     }
-    this.subscription = this.authService.popup.subscribe(e=>{
-      this.message = e.message;
+    this.subscription = this.authService.popup.subscribe((e) => {
+      this.message1 = e.message1;
+      this.message2 = e.message2;
       this.show = e.show;
-      console.log('this.authService.message555555qqqqqqq',e)
-    })
+      //console.log('this.authService.message555555qqqqqqq',e)
+    });
 
     const email = this.dateForm.get('email').value;
     const password = this.dateForm.get('password').value;
@@ -73,8 +71,6 @@ export class AuthComponent implements OnInit, OnDestroy {
   onCancel() {
     this.ruta.navigate(['/']);
   }
-
-
 
   ngOnDestroy() {
     //this.postService.showPopup = false;

@@ -49,6 +49,6 @@
       </form>
     </div>
   </section>
-  <app-popup-alert *ngIf="show"
-    [mesaj]="message"></app-popup-alert>
+  <app-popup-alert *ngIf="show" [mesaj1]="message1" [mesaj2]="message2"
+    (click)="this.authService.SendVerificationMail()" style="cursor: pointer;"></app-popup-alert>
 </main>
