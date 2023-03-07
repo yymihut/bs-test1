@@ -141,12 +141,14 @@ export class AuthService {
   isLogged(user) {
     localStorage.setItem('user', JSON.stringify(user));
     JSON.parse(localStorage.getItem('user')!);
+    return true;
   }
 
   // Sign out
   logOut() {
-    return this.afAuth.signOut().then(() => {
+    this.afAuth.signOut().then(() => {
       localStorage.removeItem('user');
+      this.user.next(null);
       this.router.navigate(['/']);
       if (this.timer) {
         clearTimeout(this.timer);
@@ -157,7 +159,7 @@ export class AuthService {
   //auto  login - daca avem user logat in local storage
   autoLogin() {
     const user = JSON.parse(localStorage.getItem('user'));
-    //console.log('la auth autoLogin() {', user);
+    console.log('la auth autoLogin() {', user);
     if (user) {
       return;
     }
@@ -176,7 +178,6 @@ export class AuthService {
     this.timer = setTimeout(() => {
       this.logOut();
     }, 4000);
-    this.isLoggedIn;
   }
 
   /* Setting up user data when sign in with username/password,

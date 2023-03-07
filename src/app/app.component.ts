@@ -14,7 +14,9 @@ export class AppComponent implements OnInit {
     //Called after the constructor, initializing input properties, and the first call to ngOnChanges.
     //Add 'implements OnInit' to the class.
     this.authservice.autoLogin();
-    this.authservice.autoLogout();
+    const user = JSON.parse(localStorage.getItem('user'));
+    console.log('la app localstorage', user);
+    // this.authservice.autoLogout();
   }
   title = 'bs-test1';
 }

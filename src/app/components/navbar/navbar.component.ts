@@ -1,4 +1,10 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import {
+  Component,
+  OnDestroy,
+  OnInit,
+  SimpleChanges,
+  OnChanges,
+} from '@angular/core';
 import { Subscription } from 'rxjs';
 import { AuthService } from 'src/app/services/auth.service';
 
@@ -16,14 +22,12 @@ export class NavbarComponent implements OnInit, OnDestroy {
   constructor(private authService: AuthService) {}
 
   ngOnInit(): void {
-    // this.userSubs = this.authService.user.subscribe((user) => {
-    //   this.esteLogat = !user ? false : true;
-    // });
-    console.log('nav bar', this.authService.isLoggedIn);
-    // console.log('nav bar local storage',localStorage.getItem('user'))
-    this.esteLogat = this.authService.isLoggedIn;
     //Called after the constructor, initializing input properties, and the first call to ngOnChanges.
     //Add 'implements OnInit' to the class.
+    this.userSubs = this.authService.user.subscribe((user) => {
+      this.esteLogat = !user ? false : true;
+    });
+    //console.log('nav bar', this.authService.isLoggedIn);
   }
 
   logOut() {
