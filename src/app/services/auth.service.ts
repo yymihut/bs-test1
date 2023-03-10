@@ -159,8 +159,8 @@ export class AuthService {
   //auto  login - daca avem user logat in local storage
   autoLogin() {
     const user = JSON.parse(localStorage.getItem('user'));
-    console.log('la auth autoLogin() {', user);
-    if (user) {
+
+    if (!user) {
       return;
     }
     const loadedUser = new User(
@@ -172,12 +172,13 @@ export class AuthService {
     );
     this.user.next(loadedUser);
     this.autoLogout();
+    console.log('la auth autoLogin() {loadedUser', loadedUser);
   }
 
   autoLogout() {
     this.timer = setTimeout(() => {
       this.logOut();
-    }, 4000);
+    }, 8000);
   }
 
   /* Setting up user data when sign in with username/password,
