@@ -19,7 +19,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   private userSubs: Subscription;
   esteLogat = false;
 
-  constructor(private authService: AuthService) {}
+  constructor(public authService: AuthService) {}
 
   ngOnInit(): void {
     //Called after the constructor, initializing input properties, and the first call to ngOnChanges.

@@ -19,9 +19,7 @@ input.ng-invalid.ng-touched {
   width: 150px;
   margin-bottom: 10px;
 }
-::ng-deep ngb-modal-backdrop {
-  z-index: 600 !important;
-}
+
 button {
   margin-top: 15px;
 }
@@ -33,3 +31,4 @@ button {
   background-color: grey;
   color: white;
 }
+

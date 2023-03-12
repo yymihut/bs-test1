@@ -35,12 +35,13 @@ import { environment } from '../environments/environment';
 import { VerifyemailComponent } from './components/verifyemail/verifyemail.component';
 import {provideDatabase, getDatabase} from '@angular/fire/database'
 import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
+import { AuthGuard } from './services/auth.guard';
 
 const routingulAplicatiei: Routes = [
   { path: '', component: HomeComponent },
-  { path: 'projects', component: ProjectsComponent },
+  { path: 'projects', component: ProjectsComponent, canActivate:[AuthGuard] },
   { path: 'hireme', component: HireMeComponent },
-  { path: 'mesaje', component: MesajeComponent },
+  { path: 'mesaje', component: MesajeComponent, canActivate:[AuthGuard] },
   { path: 'verify-email-address', component: VerifyemailComponent },
   { path: 'cv', component: CVComponent },
   { path: 'not-found', component: NotfoundPageComponent },

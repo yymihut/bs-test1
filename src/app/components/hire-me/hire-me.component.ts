@@ -5,6 +5,7 @@ import { Post } from 'src/app/services/post.model';
 import { PostService } from 'src/app/services/postService.service';
 import { ConfirmationModalComponent } from 'src/app/shared/confirmation-modal/confirmation-modal.component';
 import { Subscription } from 'rxjs';
+import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
   selector: 'app-hire-me',
@@ -16,7 +17,11 @@ export class HireMeComponent implements OnInit, OnDestroy {
   error = null;
   subscription: Subscription;
 
-  constructor(private ruta: Router, private postService: PostService) {}
+  constructor(
+    private ruta: Router,
+    private postService: PostService,
+    private auth: AuthService
+  ) {}
 
   @ViewChild('confirmationModal')
   private modalComponent!: ConfirmationModalComponent;
@@ -85,7 +90,10 @@ export class HireMeComponent implements OnInit, OnDestroy {
   onSubmit() {
     //console.log(this.dateForm);
     //console.log('dateForm.get(email):', this.dateForm.get('email').value);
-    this.openConfirmareModal();
+    if (!this.auth.isLogged) {
+      this.openConfirmareModal();
+    }
+    this.ruta.navigate(['/auth']);
   }
   onAddHobby() {
     const control = new FormControl(null, Validators.required);
@@ -114,7 +122,7 @@ export class HireMeComponent implements OnInit, OnDestroy {
   }
 
   onCreatePost(postData: Post) {
-    //send Http request prin serviciul http
+    //send to firestoreDB request prin serviciul postService
     this.postService.createPost(
       postData.nume,
       postData.amount,
@@ -125,6 +133,7 @@ export class HireMeComponent implements OnInit, OnDestroy {
       postData.hobbyes
     );
   }
+
   inchideEroarea() {
     this.error = null;
     this.ruta.navigate(['/auth']);

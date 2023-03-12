@@ -1,6 +1,8 @@
-<main class="page hire-me-page">
+<main>
   <section class="portfolio-block hire-me">
     <div class="container">
+      <!--class="page hire-me-page"  -->
+      <app-alert [message]="this.authService.error" *ngIf="this.authService.error" ></app-alert>
       <div class="heading">
         <h2 id="inregistreazate">{{isLoginMode? 'Login' : 'Sign Up'}}</h2>
       </div> <button class="btn " id='buttonSwitch' type="button" style="margin-left: 10px;" (click)="onSwitchMode()">
@@ -49,6 +51,6 @@
       </form>
     </div>
   </section>
-  <app-popup-alert *ngIf="show" [mesaj1]="message1" [mesaj2]="message2"
-    (click)="this.authService.SendVerificationMail()" style="cursor: pointer;"></app-popup-alert>
+  <!-- <app-popup-alert *ngIf="show" [mesaj1]="message1" [mesaj2]="message2"
+    (click)="this.authService.SendVerificationMail()" style="cursor: pointer;"></app-popup-alert> -->
 </main>

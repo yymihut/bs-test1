@@ -12,6 +12,7 @@ export class AuthService {
   // user = new Subject<User>(); //primim datele noi de fiecare data cand ele se schimba
   user = new BehaviorSubject<User>(null); //ne da acces si la datele emise anterior
   userData: any; // Save logged in user data
+  error = ''
   popup = new Subject<any>();
   private timer: any;
 
@@ -22,22 +23,7 @@ export class AuthService {
 
     public database: Database
   ) {
-    /* Saving user data in localstorage when
-    logged in and setting up null when logged out */
-    // this.afAuth.authState.subscribe((user) => {
-    //   if (user) {
-    //     this.userData = user;
-    //     localStorage.setItem('user', JSON.stringify(this.userData));
-    //    // JSON.parse(localStorage.getItem('user')!);
-    //     // console.log(
-    //     //   'la auth.service',
-    //     //   JSON.parse(localStorage.getItem('user')!).uid
-    //     // );
-    //   } else {
-    //     localStorage.setItem('user', 'null');
-    //     JSON.parse(localStorage.getItem('user')!);
-    //   }
-    // });
+
   }
 
   // Reset Forggot password
@@ -130,6 +116,8 @@ export class AuthService {
         }
       })
       .catch((error) => {
+        console.log('la auth .catch((error) =>', error.message);
+        this.error = error.message;
         this.sendPopup(true, error, null);
       });
   }
@@ -172,29 +160,14 @@ export class AuthService {
     );
     this.user.next(loadedUser);
     this.autoLogout();
-    console.log('la auth autoLogin() {loadedUser', loadedUser);
+    //console.log('la auth autoLogin() {loadedUser', loadedUser);
   }
 
   autoLogout() {
     this.timer = setTimeout(() => {
       this.logOut();
-    }, 8000);
+    }, 18000);
   }
-
-  /* Setting up user data when sign in with username/password,
-  sign up with username/password and sign in with social auth
-  provider in Firestore database using AngularFirestore + AngularFirestoreDocument service */
-  // SetUserData(user: any) {
-  //   const userData = {
-  //     uid: user.uid,
-  //     email: user.email,
-  //     displayName: user.displayName,
-  //     photoURL: user.photoURL,
-  //     emailVerified: user.emailVerified,
-  //   };
-  //   this.user.next(userData);
-  //   this.isLogged(userData);
-  // }
 
   private handleAuthentication(
     uid: string,
@@ -264,26 +237,6 @@ export class AuthService {
   //     );
   // }
 
-  // private handleAuthentication(
-  //   email: string,
-  //   localId: string,
-  //   accessToken: string,
-  //   expiresIn: number,
-  //   displayName: string
-  // ) {
-  //   const expirationDate = new Date(
-  //     new Date().getTime() + +expiresIn * 1000
-  //     //new Date().getTime() - timpul de la inceputul anului 1970 + timpul de expirare de la firebase
-  //   );
-  //   const user = new User(
-  //     email,
-  //     localId,
-  //     accessToken,
-  //     expirationDate,
-  //     displayName
-  //   );
-  //   this.user.next(user);
-  // }
 
   // private handleError(err: HttpErrorResponse) {
   //   let errorMesage = 'A intervenit o eroare';
