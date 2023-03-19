@@ -1,9 +1,27 @@
-<div class="backdropm"></div>
+<!-- cu bootstrap modal -->
+<div class="modal-header">
+  <h4 class="modal-title">{{ title }}</h4>
+  <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('Close click')">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+<div class="modal-body">
+  <p>{{ message }}</p>
+</div>
+<div class="modal-footer">
+  <button type="button" class="btn btn-primary" (click)="activeModal.close('OK click')">OK</button>
+</div>
+
+
+<!-- Vertically centered scrollable modal -->
+
+
+
+<!-- //******* componenta este buna css+html+ts - doar ca nu functioneaza cu bootstrap   -->
+<!-- <div class="backdropm"></div>
 <div class="alert-boxm">
   <p>{{ message }}</p>
   <div class="alert-box-actionsm">
     <button class="btn  btn-danger">Close</button>
   </div>
-  <!-- btn-primary -->
-</div>
-
+</div> -->

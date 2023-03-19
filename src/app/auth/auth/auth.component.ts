@@ -1,15 +1,22 @@
-import { Component, OnInit, OnDestroy, Input, ViewEncapsulation } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  OnDestroy,
+  Input,
+  ViewEncapsulation,
+} from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { BehaviorSubject, Observable, Subscription } from 'rxjs';
 import { PostService } from 'src/app/services/postService.service';
 import { AuthService } from '../../services/auth.service';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { AlertComponent } from 'src/app/shared/alert/alert.component';
 
 @Component({
   selector: 'app-auth',
   templateUrl: './auth.component.html',
   styleUrls: ['./auth.component.css'],
-
 })
 export class AuthComponent implements OnInit, OnDestroy {
   // @Input() showPopup: boolean = false;
@@ -26,15 +33,23 @@ export class AuthComponent implements OnInit, OnDestroy {
   constructor(
     private ruta: Router,
     public authService: AuthService,
-    public postService: PostService
+    public postService: PostService,
+    private modalService: NgbModal
   ) {}
 
-  ngOnInit(): void {
+  ngOnInit() {
     this.dateForm = new FormGroup({
       email: new FormControl(null, [Validators.required, Validators.email]),
       password: new FormControl(null, Validators.required),
     });
-    //console.log('this.subscription la auth NEXT',);
+    //console.log('la auth component inainte de if', this.authService.error);
+  }
+
+  showErrorModal() {
+    console.log('la auth component show modal', this.authService.error);
+    const modalRef = this.modalService.open(AlertComponent);
+    modalRef.componentInstance.title = 'Error';
+    modalRef.componentInstance.message = this.message1;
   }
 
   onSubmit() {
@@ -46,6 +61,9 @@ export class AuthComponent implements OnInit, OnDestroy {
       this.message1 = e.message1;
       this.message2 = e.message2;
       this.show = e.show;
+
+      this.showErrorModal();
+      this.subscription.unsubscribe();
       //console.log('this.authService.message555555qqqqqqq',e)
     });
 
@@ -66,7 +84,7 @@ export class AuthComponent implements OnInit, OnDestroy {
   onSwitchMode() {
     this.isLoginMode = !this.isLoginMode;
     this.dateForm.reset();
-    this.errLogin = null;
+    //this.errLogin = null;
   }
 
   onCancel() {
@@ -74,9 +92,9 @@ export class AuthComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    //this.postService.showPopup = false;
+    // this.postService.showPopup = false
     // unsubscribe to ensure no memory leaks
-    //this.subscription.unsubscribe();
+    this.subscription.unsubscribe();
   }
 }
 
