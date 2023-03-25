@@ -88,10 +88,11 @@ export class HireMeComponent implements OnInit, OnDestroy {
     this.ruta.navigate(['/']);
   }
   onSubmit() {
-    //console.log(this.dateForm);
+    console.log('onSubmit() hire me', this.auth.user);
     //console.log('dateForm.get(email):', this.dateForm.get('email').value);
-    if (!this.auth.isLogged) {
+    if (this.auth.user) {
       this.openConfirmareModal();
+      return;
     }
     this.ruta.navigate(['/auth']);
   }

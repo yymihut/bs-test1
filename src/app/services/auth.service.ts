@@ -12,7 +12,7 @@ export class AuthService {
   // user = new Subject<User>(); //primim datele noi de fiecare data cand ele se schimba
   user = new BehaviorSubject<User>(null); //ne da acces si la datele emise anterior
   userData: any; // Save logged in user data
-  error = ''
+  error = '';
   popup = new Subject<any>();
   private timer: any;
 
@@ -22,9 +22,7 @@ export class AuthService {
     public router: Router,
 
     public database: Database
-  ) {
-
-  }
+  ) {}
 
   // Reset Forggot password
   ForgotPassword(passwordResetEmail: string) {
@@ -166,7 +164,7 @@ export class AuthService {
   autoLogout() {
     this.timer = setTimeout(() => {
       this.logOut();
-    }, 18000);
+    }, 22218000);
   }
 
   private handleAuthentication(
@@ -236,7 +234,6 @@ export class AuthService {
   //       })
   //     );
   // }
-
 
   // private handleError(err: HttpErrorResponse) {
   //   let errorMesage = 'A intervenit o eroare';
